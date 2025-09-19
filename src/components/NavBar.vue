@@ -3,7 +3,9 @@
 </script>
 
 <template>
-  <h1>Point.IF</h1>
+    <h1 class="text-3xl font-bold underline">
+    Ponto.IF
+  </h1>
 </template>
 
 <style scoped>
