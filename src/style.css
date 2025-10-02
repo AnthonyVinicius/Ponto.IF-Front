@@ -1,19 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap");
 @import "tailwindcss";
 :root {
-  --font-base: 'Roboto',"Segoe UI", Helvetica, Arial, sans-serif;
+  --font-base: "Roboto", "Segoe UI", Helvetica, Arial, sans-serif;
   --main-color: #1c5e27;
   --background-color: #f0f0f0;
 }
 
-*{
+* {
   font-family: var(--font-base);
   font-weight: 400;
   padding: 0;
   margin: 0;
 }
 
-body{
+body {
   background-color: var(--background-color);
 }
-
