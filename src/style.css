@@ -6,7 +6,7 @@
   --background-color: #f0f0f0;
 }
 
-* {
+body {
   font-family: var(--font-base);
   font-weight: 400;
   padding: 0;

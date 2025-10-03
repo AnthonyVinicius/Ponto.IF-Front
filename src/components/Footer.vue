@@ -2,18 +2,9 @@
     <footer class="footer">
         <div class="container">
             <div class="footer-grid">
-                <div class="footer-logo">
-                    <h3 class="footer-title">
-                        <svg class="footer-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Ponto.IF
-                    </h3>
-                    <p class="footer-desc">
-                        Sistema de Gerenciamento de Ponto<br>
-                        IFPE - Campus Palmares
-                    </p>
+                <div>
+                        <img class="h-auto w-auto" src="../img/ponto_if.png"
+                            alt="Logo Ponto.IF" />
                 </div>
 
                 <div>
@@ -119,25 +110,9 @@ footer .footer-grid {
     }
 }
 
-footer .footer-title {
-    display: flex;
-    align-items: center;
-    font-size: 1.75rem;
-    font-weight: bold;
-    color: #1C5E27;
-}
-
-footer .footer-icon {
-    width: 1.75rem;
-    height: 1.75rem;
-    margin-right: 0.5rem;
-    color: #1C5E27;
-}
-
 footer .footer-desc {
     color: #4b5563;
     line-height: 1.6;
-    margin-top: 0.5rem;
 }
 
 footer .footer-subtitle {

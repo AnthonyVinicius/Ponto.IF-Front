@@ -7,7 +7,7 @@
             <div class="flex justify-between items-center h-20">
                 <div class="flex-shrink-0">
                     <router-link to="/" class="flex items-center">
-                        <img class="h-32 w-auto transition-all duration-300" src="../img/ponto_if.png"
+                        <img class="h-15 w-auto transition-all duration-300" src="../img/ponto_if.png"
                             alt="Logo Ponto.IF" />
                     </router-link>
                 </div>
