@@ -1,8 +1,8 @@
 <script setup>
-import { ref } from 'vue'
-import Footer from './Footer.vue'
-import NavBar from './Navbar.vue'
-import Sidebar from './Sidebar.vue'
+import { ref } from 'vue';
+import NavBar from './Navbar.vue'; 
+import Footer from './Footer.vue';
+import Sidebar from './SideBar.vue';
 
 const isExpanded = ref(true)
 const on = false
