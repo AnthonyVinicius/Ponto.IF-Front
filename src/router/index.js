@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Dashboard from "../views/Dashboard.vue";
+import TelaLogin from "../components/TelaLogin.vue";
+
 
 const router = createRouter({
   history: createWebHistory(),
@@ -13,6 +15,11 @@ const router = createRouter({
       name: "Dashboard",
       component: Dashboard,
     },
+    {
+      path: "/login",
+      name: "login",
+      component: TelaLogin,
+    }
   ],
 });
 
