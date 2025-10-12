@@ -2,7 +2,6 @@
 import BaseLayout from '../components/BaseLayout.vue';
 import BaseButton from '../components/BaseButton.vue';
 import Filters from '../components/Filters.vue';
-import SearchBar from '../components/SearchBar.vue';
 import Table from '../components/Table.vue';
 
 import { ref, computed } from "vue";
