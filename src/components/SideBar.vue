@@ -54,42 +54,30 @@
 </template>
 
 <script setup>
-// ... SEU SCRIPT CONTINUA IGUAL ...
 import { shallowRef } from 'vue';
+import { ClipboardCheck, List, Users, BarChart2 } from 'lucide-vue-next';
 
 defineProps({
-    isExpanded: {
-        type: Boolean,
-        required: true,
-    }
+  isExpanded: {
+    type: Boolean,
+    required: true,
+  }
 });
 
-const IconRegistrar = {
-    template: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-1.036.84-1.875 1.875-1.875h4.5c1.036 0 1.875.84 1.875 1.875v4.5c0 1.036-.84 1.875-1.875 1.875h-4.5A1.875 1.875 0 0 1 3.75 9.375v-4.5zM3.75 14.625c0-1.036.84-1.875 1.875-1.875h4.5c1.036 0 1.875.84 1.875 1.875v4.5c0 1.036-.84 1.875-1.875 1.875h-4.5a1.875 1.875 0 0 1-1.875-1.875v-4.5zM13.5 4.875c0-1.036.84-1.875 1.875-1.875h4.5c1.036 0 1.875.84 1.875 1.875v4.5c0 1.036-.84 1.875-1.875 1.875h-4.5A1.875 1.875 0 0 1 13.5 9.375v-4.5zM13.5 14.625c0-1.036.84-1.875 1.875-1.875h4.5c1.036 0 1.875.84 1.875 1.875v4.5c0 1.036-.84 1.875-1.875 1.875h-4.5a1.875 1.875 0 0 1-1.875-1.875v-4.5z" /></svg>`
-};
-const IconLista = {
-    template: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h7.5M8.25 12h7.5m-7.5 5.25h7.5M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0z" /></svg>`
-};
-const IconAlunos = {
-    template: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m-7.286 2.72a3 3 0 0 1-4.682-2.72 9.094 9.094 0 0 1 3.741-.479m7.286 2.72a8.963 8.963 0 0 1-7.286 0M12 12.75a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" /></svg>`
-};
-const IconRelatorios = {
-    template: `<svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125z" /></svg>`
-};
-
 const menuItems = shallowRef([
-    { to: '/registrar-presenca', label: 'Registrar Presença', icon: IconRegistrar },
-    { to: '/dashboard', label: 'Lista de Presenças', icon: IconLista },
-    { to: '/gerenciar-alunos', label: 'Gerenciar Alunos', icon: IconAlunos },
-    { to: '/relatorios', label: 'Relatórios', icon: IconRelatorios },
+  { to: '/registrar-presenca', label: 'Registrar Presença', icon: ClipboardCheck },
+  { to: '/dashboard', label: 'Lista de Presenças', icon: List },
+  { to: '/gerenciar-alunos', label: 'Gerenciar Alunos', icon: Users },
+  { to: '/relatorios', label: 'Relatórios', icon: BarChart2 },
 ]);
 
 const usuario = {
-    nome: 'Ericlecio',
-    cargo: 'Administrador',
-    avatarUrl: 'https://media.licdn.com/dms/image/v2/D4D03AQGO0jFnAufS3g/profile-displayphoto-shrink_200_200/B4DZdbRf0MGkAY-/0/1749583004054?e=2147483647&v=beta&t=2Znm62Yvxyf0vJ8VN2DSr3CpTg0QEtYDtvb-vfjQ3HE',
+  nome: 'Ericlecio',
+  cargo: 'Administrador',
+  avatarUrl: 'https://media.licdn.com/dms/image/v2/D4D03AQGO0jFnAufS3g/profile-displayphoto-shrink_200_200/B4DZdbRf0MGkAY-/0/1749583004054?e=2147483647&v=beta&t=2Znm62Yvxyf0vJ8VN2DSr3CpTg0QEtYDtvb-vfjQ3HE',
 };
 </script>
+
 
 <style scoped>
 .router-link-exact-active {
