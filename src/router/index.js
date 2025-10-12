@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Dashboard from "../views/Dashboard.vue";
+import LeitorBiometrico from "../views/LeitorBiometrico.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -12,6 +13,11 @@ const router = createRouter({
       path: "/dashboard",
       name: "Dashboard",
       component: Dashboard,
+    },
+    {
+      path: "/registrar-presenca",
+      name: "RegistrarPresenca",
+      component: LeitorBiometrico,
     },
   ],
 });

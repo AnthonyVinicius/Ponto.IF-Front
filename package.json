@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.13",
+    "axios": "^1.12.2",
     "install": "^0.13.0",
     "npm": "^11.6.0",
     "tailwindcss": "^4.1.13",

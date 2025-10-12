@@ -1,32 +1,25 @@
 <script setup>
 import { ref } from 'vue'
-import Footer from './Footer.vue'
-import NavBar from './Navbar.vue'
-import Sidebar from './SideBar.vue'
+import Sidebar from '../components/SideBar.vue'
+import Header from '../components/Header.vue'
 
-const isExpanded = ref(true)
-const on = false
+const isSidebarExpanded = ref(true)
+
 const toggleSidebar = () => {
-  isExpanded.value = !isExpanded.value
+  isSidebarExpanded.value = !isSidebarExpanded.value
 }
 </script>
 
 <template>
-  <div class="flex flex-col min-h-screen">
+  <div class="flex h-screen bg-gray-100">
+    <Sidebar :is-expanded="isSidebarExpanded" />
 
-    <NavBar />
-    <div class="flex flex-1">
+    <div class="flex flex-1 flex-col overflow-hidden">
+      <Header @toggle-sidebar="toggleSidebar" />
 
-      <Sidebar v-if="on"
-        :is-expanded="isExpanded" 
-        @toggle-sidebar="toggleSidebar"
-      />
-
-      <main class="flex-1 p-6 bg-gray-50 overflow-y-auto transition-all duration-300">
+      <main class="flex-1 overflow-y-auto p-6 md:p-8">
         <slot></slot>
       </main>
     </div>
- 
-    <Footer></Footer>
   </div>
 </template>
