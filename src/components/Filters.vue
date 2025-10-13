@@ -1,21 +1,33 @@
 <script setup>
 import { ref } from "vue";
-const props = defineProps({ /*...*/ });
+
+const props = defineProps({
+    modelValue: String,
+    options: {
+        type: Array,
+        default: () => [],
+    },
+});
+
 const emit = defineEmits(["update:modelValue"]);
+
 const open = ref(false);
-const selectOption = (option) => { /*...*/ };
+
+const selectOption = (option) => {
+    emit("update:modelValue", option); 
+    open.value = false;               
+};
 </script>
 
 <template>
     <div class="relative">
         <button type="button" @click="open = !open"
             class="flex h-full items-center gap-2 whitespace-nowrap rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50">
-
             <slot name="icon"></slot>
 
             <span>
                 <slot>
-                    {{ modelValue || 'Selecione...' }}
+                    {{ modelValue || "Selecione..." }}
                 </slot>
             </span>
         </button>

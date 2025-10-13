@@ -18,7 +18,7 @@ const disciplinaAtual = ref("Projeto em computação");
 const searchQuery = ref("");
 const selectedDate = ref("");
 const status = ref("All");
-const statusOptions = ["All", "Presente", "Atrasado", "Faltou"];
+const statusOptions = ["All", "Presente", "Atraso", "Falta"];
 
 const alunos = ref([
     {
@@ -109,6 +109,7 @@ const filteredAlunos = computed(() => {
                         </template>
                         Status: {{ status }}
                     </Filters>
+
 
                     <BaseButton>
                         <Download class="h-5 w-5 mr-2" />
