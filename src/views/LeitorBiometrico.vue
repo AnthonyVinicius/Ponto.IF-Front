@@ -58,10 +58,10 @@
 import { ref, onMounted } from "vue";
 import BaseLayout from "../components/BaseLayout.vue";
 import apiService from "../services/apiService";
+import { useNotification } from "../composables/useNotification";
 
 const alunos = ref([]);
-const mensagem = ref("");
-const mensagemTipo = ref("");
+const { addNotification } = useNotification();
 
 onMounted(async () => {
   const response = await apiService.get("/alunos");
@@ -75,23 +75,15 @@ async function capturarDigital() {
     const aluno = alunos.value.find((a) => a.id === alunoId);
 
     if (!aluno) {
-      mensagem.value = "Aluno não encontrado!";
-      mensagemTipo.value = "erro";
+      addNotification("Aluno não encontrado!", "error");
       return;
     }
 
     // Atualiza status para presente
     await apiService.put(`/alunos/${alunoId}`, { status: "Presente" });
-    mensagem.value = `Presença registrada para ${aluno.nome}!`;
-    mensagemTipo.value = "sucesso";
+    addNotification(`Presença registrada para ${aluno.nome}!`, "success");
   } catch (error) {
-    mensagem.value = "Erro ao registrar presença.";
-    mensagemTipo.value = "erro";
+    addNotification("Erro ao registrar presença.", "error");
   }
-
-  // Limpa mensagem após alguns segundos
-  setTimeout(() => {
-    mensagem.value = "";
-  }, 4000);
 }
 </script>
