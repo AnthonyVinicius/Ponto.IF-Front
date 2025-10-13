@@ -67,8 +67,8 @@ defineProps({
 const menuItems = shallowRef([
   { to: '/registrar-presenca', label: 'Registrar Presença', icon: ClipboardCheck },
   { to: '/dashboard', label: 'Lista de Presenças', icon: List },
-  { to: '/gerenciar-alunos', label: 'Gerenciar Alunos', icon: Users },
-  { to: '/relatorios', label: 'Relatórios', icon: BarChart2 },
+  { to: '/', label: 'Gerenciar Alunos', icon: Users },
+  { to: '/', label: 'Relatórios', icon: BarChart2 },
 ]);
 
 const usuario = {
