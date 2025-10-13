@@ -15,3 +15,5 @@ A proposta deste projeto é desenvolver um sistema baseado em leitura biométric
 * Integração com a coordenação pedagógica, possibilitando acompanhamento em tempo real.
 
 * Gestão eficiente de dados, com relatórios automáticos de frequência e identificação de alunos com alto índice de faltas.
+
+[FIGMA](https://www.figma.com/design/IHVkOkdbD1TnkPHwUTxdw3/Ponto.If?node-id=0-1&t=PIRLkInUmx0PF1SP-0)
