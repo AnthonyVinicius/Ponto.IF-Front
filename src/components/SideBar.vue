@@ -65,10 +65,11 @@ defineProps({
 });
 
 const menuItems = shallowRef([
-  { to: '/registrar-presenca', label: 'Registrar Presença', icon: ClipboardCheck },
-  { to: '/dashboard', label: 'Lista de Presenças', icon: List },
-  { to: '/', label: 'Gerenciar Alunos', icon: Users },
-  { to: '/', label: 'Relatórios', icon: BarChart2 },
+    { to: '/registrar-presenca', label: 'Registrar Presença', icon: ClipboardCheck },
+    { to: '/dashboard', label: 'Lista de Presenças', icon: List },
+    { to: '/', label: 'Gerenciar Alunos', icon: Users },
+    { to: '/', label: 'Relatórios', icon: BarChart2 },
+    { to: '/login', label: 'Login', icon: BarChart2 },
 ]);
 
 const usuario = {

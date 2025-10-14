@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Dashboard from "../views/Dashboard.vue";
+import TelaLogin from "../components/TelaLogin.vue";
 import LeitorBiometrico from "../views/LeitorBiometrico.vue";
 
 const router = createRouter({
@@ -13,6 +14,11 @@ const router = createRouter({
       path: "/dashboard",
       name: "Dashboard",
       component: Dashboard,
+    },
+    {
+      path: "/login",
+      name: "login",
+      component: TelaLogin,
     },
     {
       path: "/registrar-presenca",
