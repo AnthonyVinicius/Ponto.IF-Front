@@ -1,14 +1,14 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Dashboard from "../views/Dashboard.vue";
-import TelaLogin from "../components/TelaLogin.vue";
-import LeitorBiometrico from "../views/LeitorBiometrico.vue";
+import LoginView from "../views/LoginView.vue";
+import RegistrarPresenca from "../views/RegistrarPresenca.vue";
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
       path: "/",
-      redirect: "/dashboard",
+      redirect: "/registrar-presenca",
     },
     {
       path: "/dashboard",
@@ -18,12 +18,12 @@ const router = createRouter({
     {
       path: "/login",
       name: "login",
-      component: TelaLogin,
+      component: LoginView,
     },
     {
       path: "/registrar-presenca",
       name: "RegistrarPresenca",
-      component: LeitorBiometrico,
+      component: RegistrarPresenca,
     },
   ],
 });
