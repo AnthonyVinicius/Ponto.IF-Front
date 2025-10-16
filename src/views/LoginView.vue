@@ -1,55 +1,53 @@
 <template>
   <div class="flex items-center justify-center min-h-screen">
-    
+
     <div class="w-full max-w-md p-8 space-y-8 bg-[#1c5e27] rounded-2xl shadow-lg">
-      
+
       <div class="text-center">
         <div class="inline-block p-3 mb-4 bg-white bg-opacity-10 rounded-full">
-          <img 
-            src="/src/img/biometria.png" 
-            alt="Ícone de biometria" 
-            class="w-8 h-8"
-          >
+          <img src="/src/img/biometria.png" alt="Ícone de biometria" class="w-8 h-8">
         </div>
         <h1 class="text-2xl font-bold text-white">Administração de presença</h1>
         <p class="text-gray-300">Acesso restrito ao administrador</p>
       </div>
-      
+
       <form class="space-y-6" @submit.prevent="handleLogin">
         <div>
           <label for="email" class="block mb-2 text-sm font-medium text-white">Usuário</label>
-          <input 
-            v-model="email"
-            type="email" 
-            name="email" 
-            id="email" 
-            class="w-full px-4 py-3 text-gray-800 bg-white border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400" 
-            placeholder="seuemail@exemplo.com"
-          >
+          <input v-model="email" type="email" name="email" id="email"
+            class="w-full px-4 py-3 text-gray-800 bg-white border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+            placeholder="seuemail@exemplo.com">
         </div>
-        
+
         <div>
           <label for="password" class="block mb-2 text-sm font-medium text-white">Senha</label>
-          <input 
-            v-model="password"
-            type="password" 
-            name="password" 
-            id="password" 
-            class="w-full px-4 py-3 text-gray-800 bg-white border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400" 
-            placeholder="••••••••"
-          >
+          <input v-model="password" type="password" name="password" id="password"
+            class="w-full px-4 py-3 text-gray-800 bg-white border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+            placeholder="••••••••">
         </div>
-        
+
         <div>
-          <button 
-            type="submit" 
-            class="w-full px-4 py-3 font-semibold text-green-700 bg-white rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50 transition-colors"
-          >
+          <button type="submit"
+            class="w-full px-4 py-3 font-semibold text-green-700 bg-white rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50 transition-colors">
             Entrar
           </button>
         </div>
       </form>
     </div>
+    <router-link to="/registrar-presenca">
+      <button
+        class="bg-[#1C5E27] text-white font-semibold py-2.5 px-5 rounded-lg flex items-center gap-2 hover:bg-[#154b1f] transition-colors text-sm absolute bottom-6 right-6">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          class="lucide lucide-maximize-icon lucide-maximize">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+          <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+          <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+          <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+        </svg>
+        Registrar Presença
+      </button>
+    </router-link>
   </div>
 </template>
 

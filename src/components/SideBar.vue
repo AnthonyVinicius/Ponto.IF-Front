@@ -35,17 +35,6 @@
                             <h1 class="text-base font-semibold text-gray-700 whitespace-nowrap">{{ usuario.nome }}</h1>
                             <p class="text-sm text-gray-500">{{ usuario.cargo }}</p>
                         </div>
-
-                        <button
-                            class="relative rounded-full p-2 text-gray-500 transition-colors hover:bg-gray-200/60 hover:text-gray-800">
-                            <span class="sr-only">Ver notificações</span>
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                            </svg>
-                            <span class="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-red-500"></span>
-                        </button>
                     </div>
                 </div>
             </div>
@@ -55,7 +44,7 @@
 
 <script setup>
 import { shallowRef } from 'vue';
-import { ClipboardCheck, List, Users, BarChart2 } from 'lucide-vue-next';
+import { ClipboardCheck, List, LogOut } from 'lucide-vue-next';
 
 defineProps({
   isExpanded: {
@@ -67,9 +56,7 @@ defineProps({
 const menuItems = shallowRef([
     { to: '/registrar-presenca', label: 'Registrar Presença', icon: ClipboardCheck },
     { to: '/dashboard', label: 'Lista de Presenças', icon: List },
-    { to: '/', label: 'Gerenciar Alunos', icon: Users },
-    { to: '/', label: 'Relatórios', icon: BarChart2 },
-    { to: '/login', label: 'Login', icon: BarChart2 },
+    { to: '/login', label: 'Sair', icon: LogOut },
 ]);
 
 const usuario = {
