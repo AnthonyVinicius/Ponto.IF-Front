@@ -1,5 +1,6 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gray-100 relative">
+    <Notification />
     <div class="max-w-2xl w-full bg-white rounded-2xl shadow border border-gray-200">
       <div class="flex justify-between items-start p-5">
         <div class="flex items-center gap-3">
@@ -105,6 +106,7 @@
 import { ref, onMounted } from "vue";
 import apiService from "../services/apiService";
 import { useNotification } from "../composables/useNotification";
+import Notification from "../components/Notification.vue";
 
 const alunos = ref([]);
 const { addNotification } = useNotification();
