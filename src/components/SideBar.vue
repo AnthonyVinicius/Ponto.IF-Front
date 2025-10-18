@@ -44,7 +44,7 @@
 
 <script setup>
 import { shallowRef } from 'vue';
-import { ClipboardCheck, List, LogOut } from 'lucide-vue-next';
+import { ClipboardCheck, List, LogOut, BarChart3 } from 'lucide-vue-next';
 
 defineProps({
   isExpanded: {
