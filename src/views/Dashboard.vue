@@ -46,6 +46,7 @@ const alunos = ref([
         status: "Atraso",
     },
     { name: "Maria Eduarda de Lima", hour: "--", date: "2025-10-11", status: "Falta" },
+    { name: "Vagner Alves Ferreira da Silva", hour: "20:18", date: "2025-10-18", status: "Falta" },
 ]);
 
 const filteredAlunos = computed(() => {
