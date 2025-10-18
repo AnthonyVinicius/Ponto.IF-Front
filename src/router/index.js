@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Dashboard from "../views/Dashboard.vue";
 import LoginView from "../views/LoginView.vue";
 import RegistrarPresenca from "../views/RegistrarPresenca.vue";
+import ReportsView from "../views/ReportsView.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -25,6 +26,12 @@ const router = createRouter({
       name: "RegistrarPresenca",
       component: RegistrarPresenca,
     },
+    {
+      path: "/relatorios",
+      name: "Relatorios",
+      component: ReportsView,
+    },
+    
   ],
 });
 
