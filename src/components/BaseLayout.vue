@@ -18,7 +18,6 @@ const toggleSidebar = () => {
   <div class="flex flex-1 flex-col overflow-hidden relative">
     <Header @toggle-sidebar="toggleSidebar" />
 
-    <Notification />
 
     <main class="flex-1 overflow-y-auto p-6 md:p-8">
       <slot></slot>
