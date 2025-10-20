@@ -3,6 +3,7 @@ import BaseLayout from "../components/BaseLayout.vue";
 import BaseButton from "../components/BaseButton.vue";
 import Filters from "../components/Filters.vue";
 import Table from "../components/Table.vue";
+import FrequencyChart from "../components/FrequencyChart.vue";
 
 import { ref, computed } from "vue";
 import {
@@ -46,6 +47,7 @@ const alunos = ref([
         status: "Atraso",
     },
     { name: "Maria Eduarda de Lima", hour: "--", date: "2025-10-11", status: "Falta" },
+    { name: "Vagner Alves Ferreira da Silva", hour: "20:18", date: "2025-10-18", status: "Falta" },
 ]);
 
 const filteredAlunos = computed(() => {
@@ -68,12 +70,30 @@ const filteredAlunos = computed(() => {
     }
     return aulasFiltradas;
 });
+
+const totalAlunos = computed(() => filteredAlunos.value.length);
+
+const totalPresentes = computed(() => {
+  return filteredAlunos.value.filter(
+    (aluno) => aluno.status === "Presente"
+  ).length;
+});
+
+const frequenciaPercent = computed(() => {
+  if (totalAlunos.value === 0) {
+    return 0;
+  }
+  return Math.round((totalPresentes.value / totalAlunos.value) * 100);
+});
 </script>
 
 <template>
     <BaseLayout>
         <div class="bg-white rounded-lg p-6 shadow-sm font-roboto">
             <div class="topbar flex flex-wrap items-center justify-between gap-4">
+                <div class="my-6 max-w-md">
+              <FrequencyChart :percentage="frequenciaPercent" />
+            </div>
                 <div class="title">
                     <h1 class="text-xl font-bold text-gray-800">Lista de Presença</h1>
                     <p class="text-sm text-gray-500">Todos os registros de presença</p>
