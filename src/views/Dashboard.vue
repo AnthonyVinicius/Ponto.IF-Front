@@ -1,11 +1,5 @@
 <script setup>
-import BaseLayout from "../components/BaseLayout.vue";
-import BaseButton from "../components/BaseButton.vue";
-import Filters from "../components/Filters.vue";
-import Table from "../components/Table.vue";
-import FrequencyChart from "../components/FrequencyChart.vue";
-
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import {
     Search,
     Calendar,
@@ -14,76 +8,60 @@ import {
     Circle,
 } from "lucide-vue-next";
 
-const disciplinaAtual = ref("Projeto em computação");
+import BaseLayout from "../components/BaseLayout.vue";
+import BaseButton from "../components/BaseButton.vue";
+import Filters from "../components/Filters.vue";
+import Table from "../components/Table.vue";
+import FrequencyChart from "../components/FrequencyChart.vue";
+import UserDao from "../services/UserDAO";
 
+const disciplinaAtual = ref("Projeto em Computação");
 const searchQuery = ref("");
 const selectedDate = ref("");
 const status = ref("All");
 const statusOptions = ["All", "Presente", "Atraso", "Falta"];
 
-const alunos = ref([
-    {
-        name: "Anthony Vinicius de Brito Barros",
-        hour: "19:30",
-        date: "2025-10-10",
-        status: "Presente",
-    },
-    {
-        name: "Vinicíus José de Arruda",
-        hour: "19:10",
-        date: "2025-10-10",
-        status: "Presente",
-    },
-    {
-        name: "Luiz Gabriel Buarque Vasconcelos",
-        hour: "19:40",
-        date: "2025-10-10",
-        status: "Presente",
-    },
-    {
-        name: "Ericlecio Thiago Morais de Araujo",
-        hour: "20:00",
-        date: "2025-10-11",
-        status: "Atraso",
-    },
-    { name: "Maria Eduarda de Lima", hour: "--", date: "2025-10-11", status: "Falta" },
-    { name: "Vagner Alves Ferreira da Silva", hour: "20:18", date: "2025-10-18", status: "Falta" },
-]);
+const students = ref([]);
+const isLoading = ref(false);
+const errorMessage = ref("");
+const loadStudents = async () => {
+    isLoading.value = true;
+    errorMessage.value = "";
 
-const filteredAlunos = computed(() => {
-    let aulasFiltradas = alunos.value;
+    try {
+        const response = await UserDao.getAll();
+        const data = Array.isArray(response) ? response : [];
+
+        students.value = data.map((student) => ({
+            ...student,
+            hour: "--/--",
+            date: "xx/xx/xxxx",
+            status: "Atraso",
+        }));
+    } catch (error) {
+        console.error("Erro ao carregar os estudantes:", error);
+        errorMessage.value = "Não foi possível carregar os estudantes.";
+    } finally {
+        isLoading.value = false;
+    }
+};
+const filteredStudents = computed(() => {
+    let alunos = [...students.value];
 
     if (searchQuery.value) {
-        aulasFiltradas = aulasFiltradas.filter((aluno) =>
-            aluno.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+        alunos = alunos.filter((aluno) =>
+            aluno.name?.toLowerCase().includes(searchQuery.value.toLowerCase())
         );
     }
-    if (status.value && status.value !== "All") {
-        aulasFiltradas = aulasFiltradas.filter(
-            (aluno) => aluno.status === status.value
-        );
-    }
-    if (selectedDate.value) {
-        aulasFiltradas = aulasFiltradas.filter(
-            (aluno) => aluno.date === selectedDate.value
-        );
-    }
-    return aulasFiltradas;
+
+    return alunos;
 });
 
-const totalAlunos = computed(() => filteredAlunos.value.length);
+const totalStudents = computed(() => filteredStudents.value.length);
+const frequenciaPercent = computed(() => 0);
 
-const totalPresentes = computed(() => {
-  return filteredAlunos.value.filter(
-    (aluno) => aluno.status === "Presente"
-  ).length;
-});
-
-const frequenciaPercent = computed(() => {
-  if (totalAlunos.value === 0) {
-    return 0;
-  }
-  return Math.round((totalPresentes.value / totalAlunos.value) * 100);
+onMounted(() => {
+    loadStudents();
 });
 </script>
 
@@ -92,11 +70,13 @@ const frequenciaPercent = computed(() => {
         <div class="bg-white rounded-lg p-6 shadow-sm font-roboto">
             <div class="topbar flex flex-wrap items-center justify-between gap-4">
                 <div class="my-6 max-w-md">
-              <FrequencyChart :percentage="frequenciaPercent" />
-            </div>
+                    <FrequencyChart :percentage="frequenciaPercent" />
+                </div>
+
                 <div class="title">
                     <h1 class="text-xl font-bold text-gray-800">Lista de Presença</h1>
-                    <p class="text-sm text-gray-500">Todos os registros de presença</p>
+                    <p class="text-sm text-gray-500">Usuários cadastrados</p>
+
                     <div class="mt-2">
                         <span
                             class="inline-flex items-center gap-x-1.5 rounded-full bg-[#1C5E27] px-3 py-1 text-xs font-medium text-white">
@@ -120,16 +100,16 @@ const frequenciaPercent = computed(() => {
                             <Calendar class="h-5 w-5 text-gray-400" />
                         </div>
                         <input v-model="selectedDate" type="date"
-                            class="rounded-md border border-gray-200 bg-white py-1.5 pl-10 pr-2 text-sm font-medium text-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" />
+                            class="rounded-md border border-gray-200 bg-white py-1.5 pl-10 pr-2 text-sm font-medium text-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            disabled />
                     </div>
 
-                    <Filters v-model="status" :options="statusOptions">
+                    <Filters v-model="status" :options="statusOptions" disabled>
                         <template #icon>
                             <Filter class="h-5 w-5 text-gray-500" />
                         </template>
                         Status: {{ status }}
                     </Filters>
-
 
                     <BaseButton>
                         <Download class="h-5 w-5 mr-2" />
@@ -139,9 +119,21 @@ const frequenciaPercent = computed(() => {
             </div>
 
             <div class="mt-6">
-                <Table :alunos="filteredAlunos" />
+                <div v-if="isLoading" class="text-gray-500 text-center py-8">
+                    Carregando estudantes...
+                </div>
+
+                <div v-else-if="errorMessage" class="text-red-500 text-center py-8">
+                    {{ errorMessage }}
+                </div>
+
+                <div v-else>
+                    <Table :alunos="filteredStudents" />
+                    <p class="text-sm text-gray-500 mt-4">
+                        Total de estudantes: {{ totalStudents }}
+                    </p>
+                </div>
             </div>
         </div>
     </BaseLayout>
 </template>
-
