@@ -104,7 +104,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import apiService from "../services/apiService";
+import apiService from "../api/apiService";
 import { useNotification } from "../composables/useNotification";
 import Notification from "../components/Notification.vue";
 
