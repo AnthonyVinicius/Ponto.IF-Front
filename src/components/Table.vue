@@ -29,14 +29,17 @@ function handleStatusChange(index, newStatus) {
     </thead>
     <tbody>
       <tr v-for="(aluno, index) in alunos" :key="index">
-        <td class="p-3">{{ aluno.name }}</td>
+        <td @click="$emit('aluno-click', aluno.id)" class="p-3 cursor-pointer hover:text-indigo-800 transition">
+          {{ aluno.name }}
+          <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </td>
         <td class="p-3 text-center">{{ aluno.hour }}</td>
         <td class="p-3 text-center">{{ aluno.date }}</td>
         <td class="p-3 text-center">
-          <StudentStatus
-            :status="aluno.status"
-            @update="(status) => handleStatusChange(index, status)"
-          />
+          <StudentStatus :status="aluno.status" @update="(status) => handleStatusChange(index, status)" />
         </td>
       </tr>
     </tbody>

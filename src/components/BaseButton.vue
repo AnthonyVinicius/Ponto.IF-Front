@@ -26,6 +26,7 @@ export default {
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: flex;
 }
 
 /* Botão preenchido */

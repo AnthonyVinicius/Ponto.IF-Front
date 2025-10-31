@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+  <div class="bg-white rounded-lg p-6 shadow-sm">
     <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide text-center">
       Gráfico de Frequência
     </h3>

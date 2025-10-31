@@ -2,13 +2,19 @@
     <aside
         :class="['flex h-screen flex-col overflow-y-auto border-r bg-white transition-all duration-300', isExpanded ? 'w-64 px-5 py-8' : 'w-20 items-center py-8 px-2']">
         <div :class="['flex items-center gap-x-3', isExpanded ? '' : 'justify-center']">
-            <div class="bg-[#1C5E27] p-2 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10a8.03 8.03 0 015.657 5.657c1 2 2.657 2.657 2.657 2.657z" />
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M9.343 17.657A8 8 0 0117.657 9.343S17 11 15 12a8.03 8.03 0 01-5.657 5.657c-1 2-2.657 2.657-2.657 2.657z" />
+            <div class="bg-[#1C5E27] text-white p-2 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-fingerprint-icon lucide-fingerprint">
+                    <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4" />
+                    <path d="M14 13.12c0 2.38 0 6.38-1 8.88" />
+                    <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02" />
+                    <path d="M2 12a10 10 0 0 1 18-6" />
+                    <path d="M2 16h.01" />
+                    <path d="M21.8 16c.2-2 .131-5.354 0-6" />
+                    <path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2" />
+                    <path d="M8.65 22c.21-.66.45-1.32.57-2" />
+                    <path d="M9 6.8a6 6 0 0 1 9 5.2v2" />
                 </svg>
             </div>
             <span v-show="isExpanded" class="text-xl font-bold text-gray-800 transition-opacity duration-200">Admin de
@@ -27,8 +33,7 @@
 
             <div class="mt-6 border-t pt-4">
                 <div :class="['flex w-full items-center', isExpanded ? 'gap-x-3' : 'justify-center']">
-                    <img class="h-12 w-12 rounded-full object-cover flex-shrink-0" :src="usuario.avatarUrl"
-                        :alt="usuario.nome" />
+              
 
                     <div v-show="isExpanded" class="flex flex-grow items-center justify-between">
                         <div class="transition-opacity duration-200">
@@ -44,7 +49,7 @@
 
 <script setup>
 import { shallowRef } from 'vue';
-import { ClipboardCheck, List, LogOut, BarChart3 } from 'lucide-vue-next';
+import { ClipboardCheck, List, LogOut, BarChart3, BookCheck } from 'lucide-vue-next';
 
 defineProps({
   isExpanded: {
@@ -57,13 +62,13 @@ const menuItems = shallowRef([
     { to: '/registrar-presenca', label: 'Registrar Presença', icon: ClipboardCheck },
     { to: '/dashboard', label: 'Lista de Presenças', icon: List },
     { to: '/relatorios', label: 'Relatórios', icon: BarChart3 },
+    { to: '/disciplineManager', label: 'Gerenciar Disciplinas', icon: BookCheck },
     { to: '/login', label: 'Sair', icon: LogOut },
 ]);
 
 const usuario = {
   nome: 'Ericlecio',
   cargo: 'Administrador',
-  avatarUrl: 'https://media.licdn.com/dms/image/v2/D4D03AQGO0jFnAufS3g/profile-displayphoto-shrink_200_200/B4DZdbRf0MGkAY-/0/1749583004054?e=2147483647&v=beta&t=2Znm62Yvxyf0vJ8VN2DSr3CpTg0QEtYDtvb-vfjQ3HE',
 };
 </script>
 
