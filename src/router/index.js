@@ -3,6 +3,7 @@ import Dashboard from "../views/Dashboard.vue";
 import LoginView from "../views/LoginView.vue";
 import RegistrarPresenca from "../views/RegistrarPresenca.vue";
 import ReportsView from "../views/ReportsView.vue";
+import DisciplineManager from "../views/DisciplineManager.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -31,7 +32,16 @@ const router = createRouter({
       name: "Relatorios",
       component: ReportsView,
     },
-    
+    {
+      path: "/disciplineManager",
+      name: "Disciplinas",
+      component: DisciplineManager,
+    },
+    {
+      path: "/dashboard/:userId/user",
+      name: "userDashboard",
+      component: () => import("../views/UserDashboard.vue"),
+    },
   ],
 });
 

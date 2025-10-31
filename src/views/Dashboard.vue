@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import {
     Search,
     Calendar,
@@ -24,6 +25,12 @@ const statusOptions = ["All", "Presente", "Atraso", "Falta"];
 const students = ref([]);
 const isLoading = ref(false);
 const errorMessage = ref("");
+
+const router = useRouter();
+function goToUserDashboard(userId) {
+    router.push(`/dashboard/${userId}/user`);
+}
+
 const loadStudents = async () => {
     isLoading.value = true;
     errorMessage.value = "";
@@ -39,12 +46,13 @@ const loadStudents = async () => {
             status: "Atraso",
         }));
     } catch (error) {
-        console.error("Erro ao carregar os estudantes:", error);
+        console.error("Erro ao carregar estudantes:", error);
         errorMessage.value = "Não foi possível carregar os estudantes.";
     } finally {
         isLoading.value = false;
     }
 };
+
 const filteredStudents = computed(() => {
     let alunos = [...students.value];
 
@@ -54,15 +62,17 @@ const filteredStudents = computed(() => {
         );
     }
 
+    if (status.value !== "All") {
+        alunos = alunos.filter((aluno) => aluno.status === status.value);
+    }
+
     return alunos;
 });
 
 const totalStudents = computed(() => filteredStudents.value.length);
 const frequenciaPercent = computed(() => 0);
 
-onMounted(() => {
-    loadStudents();
-});
+onMounted(loadStudents);
 </script>
 
 <template>
@@ -70,7 +80,7 @@ onMounted(() => {
         <div class="bg-white rounded-lg p-6 shadow-sm font-roboto">
             <div class="topbar flex flex-wrap items-center justify-between gap-4">
                 <div class="my-6 max-w-md">
-                    <FrequencyChart :percentage="frequenciaPercent" />
+                    <FrequencyChart :percentage="frequenciaPercent" class="border border-gray-200" />
                 </div>
 
                 <div class="title">
@@ -128,7 +138,7 @@ onMounted(() => {
                 </div>
 
                 <div v-else>
-                    <Table :alunos="filteredStudents" />
+                    <Table :alunos="filteredStudents" @aluno-click="goToUserDashboard" />
                     <p class="text-sm text-gray-500 mt-4">
                         Total de estudantes: {{ totalStudents }}
                     </p>
