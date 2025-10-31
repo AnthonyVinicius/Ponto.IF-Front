@@ -76,9 +76,16 @@ onMounted(async () => {
 
             <div v-for="(discipline, index) in disciplines" :key="discipline.id"
                 class="border border-gray-200 p-4 rounded-md m-3">
-                <h2 class="text-base font-semibold text-[#1C5E27] mb-3" @click="goToDisciplineReport(discipline.id)">
-                    {{ discipline.name }}
-                </h2>
+                <div class="flex gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                    <h2 class="text-base font-semibold text-[#1C5E27] mb-3 cursor-pointer hover:text-indigo-800 transition"
+                        @click="goToDisciplineReport(discipline.id)">
+                        {{ discipline.name }}
+                    </h2>
+                </div>
 
                 <table class="table-auto w-full border border-gray-300 m-3 shadow-sm">
                     <thead>
