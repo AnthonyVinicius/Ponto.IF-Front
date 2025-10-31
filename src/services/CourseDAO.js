@@ -1,10 +1,10 @@
 import GenericDAO from "./GenericDAO";
 import { registerIfApi } from "../api/registerIfApi";
 
-class UserDAO extends GenericDAO {
+class CourseDAO extends GenericDAO {
   constructor() {
-    super(registerIfApi, "/api/v1/registerif/user");
+    super(registerIfApi, "/course");
   }
 }
 
-export default new UserDAO();
+export default new CourseDAO();

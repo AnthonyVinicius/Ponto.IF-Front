@@ -63,8 +63,20 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import BaseLayout from '../components/BaseLayout.vue';
 import FrequencyChart from '../components/FrequencyChart.vue';
+import CourseDAO from '../services/CourseDAO';
 
+
+const disciplineInfos = ref('')
+
+async function loadDisciplinesInfo(disciplineId) {
+  try {
+    disciplineInfos.value = await CourseDAO.getAll()
+  } catch (error) {
+    console.log("Erro ao carregar dados da disciplina", error)
+  }
+}
 
 </script>

@@ -1,21 +1,43 @@
-<script setup lang="ts">
-import { ref } from 'vue'
+<script setup>
+import { onMounted, ref } from 'vue'
 import BaseLayout from '../components/BaseLayout.vue'
 import BaseButton from "../components/BaseButton.vue"
-import {
-  Search,
-  Download,
-  Plus
-} from "lucide-vue-next"
+import CourseDAO from '../services/CourseDAO'
+import { useRouter } from 'vue-router'
+
+const router = useRouter();
+
+
+function goToDisciplineReport(disciplineId) {
+    router.push({
+        path: `/dashboard/${disciplineId}/report`
+    })
+}
+
+
+const disciplines = ref([])
+
+async function loadDisciplines() {
+    try {
+        disciplines.value = await CourseDAO.getAll()
+    } catch (error) {
+        console.log("Erro ao carregar as Disciplinas", error)
+    }
+}
+
+import { Search, Download, Plus } from "lucide-vue-next"
 
 const searchQuery = ref("")
-const cursoNome = ref("Analise e Desenvolvimento de Sistemas")
 
 const alunos = ref([
-  { id: 1, nome: "João Silva", matricula: "2023001", disciplinas: 3 },
-  { id: 2, nome: "Maria Souza", matricula: "2023002", disciplinas: 5 },
-  { id: 3, nome: "Carlos Lima", matricula: "2023003", disciplinas: 4 }
+    { id: 1, nome: "João Silva", matricula: "2023001", disciplinas: 3 },
+    { id: 2, nome: "Maria Souza", matricula: "2023002", disciplinas: 5 },
+    { id: 3, nome: "Carlos Lima", matricula: "2023003", disciplinas: 4 }
 ])
+
+onMounted(async () => {
+    await loadDisciplines()
+})
 </script>
 
 <template>
@@ -24,9 +46,7 @@ const alunos = ref([
             <div class="topbar flex flex-wrap items-center justify-between gap-4 m-3">
                 <div>
                     <h1 class="text-lg font-semibold text-gray-800">Lista de Alunos por Curso</h1>
-                    <p class="text-sm text-gray-600">
-                        Selecione o curso que deseja gerenciar os alunos
-                    </p>
+                    <p class="text-sm text-gray-600">Selecione o curso que deseja gerenciar os alunos</p>
                 </div>
 
                 <div class="flex items-center gap-3">
@@ -50,9 +70,14 @@ const alunos = ref([
                 </div>
             </div>
 
-            <div class="border border-gray-200 p-4 rounded-md m-3">
-                <h2 class="text-base font-semibold text-[#1C5E27] mb-3">
-                    {{ cursoNome }}
+            <div v-if="disciplines.length === 0" class="text-center text-gray-500 p-6">
+                Carregando disciplinas...
+            </div>
+
+            <div v-for="(discipline, index) in disciplines" :key="discipline.id"
+                class="border border-gray-200 p-4 rounded-md m-3">
+                <h2 class="text-base font-semibold text-[#1C5E27] mb-3" @click="goToDisciplineReport(discipline.id)">
+                    {{ discipline.name }}
                 </h2>
 
                 <table class="table-auto w-full border border-gray-300 m-3 shadow-sm">
@@ -68,7 +93,7 @@ const alunos = ref([
                             title="Clique para ver detalhes do aluno">
                             <td class="p-3 text-center">{{ aluno.nome }}</td>
                             <td class="p-3 text-center">{{ aluno.matricula }}</td>
-                            <td class="p-3 text-center">{{ aluno.disciplinas}}</td>
+                            <td class="p-3 text-center">{{ aluno.disciplinas }}</td>
                         </tr>
                     </tbody>
                 </table>
