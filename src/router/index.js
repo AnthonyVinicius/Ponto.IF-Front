@@ -1,9 +1,8 @@
-import { createRouter, createWebHistory } from "vue-router";
-import Dashboard from "../views/Dashboard.vue";
-import LoginView from "../views/LoginView.vue";
-import RegistrarPresenca from "../views/RegistrarPresenca.vue";
-import ReportsView from "../views/DisciplineReport.vue";
-import DisciplineManager from "../views/DisciplineManager.vue";
+import { createRouter, createWebHistory } from "vue-router"
+import Dashboard from "../views/Dashboard.vue"
+import LoginView from "../views/LoginView.vue"
+import RegistrarPresenca from "../views/RegistrarPresenca.vue"
+import DisciplineManager from "../views/DisciplineManager.vue"
 
 const router = createRouter({
   history: createWebHistory(),
@@ -19,7 +18,7 @@ const router = createRouter({
     },
     {
       path: "/login",
-      name: "login",
+      name: "Login",
       component: LoginView,
     },
     {
@@ -28,21 +27,21 @@ const router = createRouter({
       component: RegistrarPresenca,
     },
     {
-      path: "/disciplineManager",
-      name: "Disciplinas",
+      path: "/disciplinas",
+      name: "DisciplineManager",
       component: DisciplineManager,
     },
     {
       path: "/dashboard/:userId/user",
-      name: "userDashboard",
+      name: "UserDashboard",
       component: () => import("../views/UserDashboard.vue"),
     },
     {
-      path: "/dashboard/:disciplineId/report",
-      name: "diciplineReport",
+      path: "/disciplinas/:disciplineId/gerenciar",
+      name: "DisciplineReport",
       component: () => import("../views/DisciplineReport.vue"),
     },
   ],
-});
+})
 
-export default router;
+export default router
