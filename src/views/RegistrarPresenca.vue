@@ -17,7 +17,7 @@
           <div>
             <h1 class="text-base font-bold text-gray-800">Leitor Biométrico</h1>
             <p class="text-gray-500 text-sm leading-tight">
-              Conecte o leitor de digitais e capture a presença dos alunos
+              Conecte o leitor de digitais e capture a presença dos usuários
             </p>
           </div>
         </div>
@@ -72,7 +72,7 @@
               <path d="M3 16v3a2 2 0 0 0 2 2h3" />
               <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
             </svg>
-            Capturar digital do aluno
+            Capturar digital do usuário
           </button>
 
           <p class="mt-3 text-xs text-gray-500">
@@ -104,30 +104,44 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import apiService from "../api/apiService";
+import UserDAO from "../services/UserDAO";
 import { useNotification } from "../composables/useNotification";
 import Notification from "../components/Notification.vue";
 
-const alunos = ref([]);
+const usuarios = ref([]);
+const mensagem = ref("");
+const mensagemTipo = ref("");
 const { addNotification } = useNotification();
 
 onMounted(async () => {
-  const response = await apiService.get("/alunos");
-  alunos.value = response;
+  try {
+    usuarios.value = await UserDAO.getAll();
+  } catch {
+    addNotification("Erro ao carregar usuários.", "error");
+  }
 });
 
 async function capturarDigital() {
   try {
-    const alunoId = 1;
-    const aluno = alunos.value.find((a) => a.id === alunoId);
-    if (!aluno) {
-      addNotification("Aluno não encontrado!", "error");
+    const userId = 1;
+    const user = usuarios.value.find((u) => u.id === userId);
+
+    if (!user) {
+      mensagem.value = "Usuário não encontrado!";
+      mensagemTipo.value = "erro";
+      addNotification(mensagem.value, "error");
       return;
     }
-    await apiService.put(`/alunos/${alunoId}`, { status: "Presente" });
-    addNotification(`Presença registrada para ${aluno.nome}!`, "success");
+
+    await UserDAO.update(userId, { status: "Presente" });
+
+    mensagem.value = `Presença registrada para ${user.nome}!`;
+    mensagemTipo.value = "sucesso";
+    addNotification(mensagem.value, "success");
   } catch (error) {
-    addNotification("Erro ao registrar presença.", "error");
+    mensagem.value = "Erro ao registrar presença.";
+    mensagemTipo.value = "erro";
+    addNotification(mensagem.value, "error");
   }
 }
 </script>

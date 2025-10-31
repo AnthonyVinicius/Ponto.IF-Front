@@ -1,7 +1,7 @@
-import { registerIfApi } from "./internalApi";
-import { pontoIfApi } from "./externalApi";
+import { registerIfApi } from "./registerIfApi";
+import { pontoIfApi } from "./pontoIfApi";
 
 export const ApiRegistry = {
-  internal: internalApi,
-  external: externalApi,
+  pontoIF: pontoIfApi,
+  registerIF: registerIfApi,
 };
