@@ -103,6 +103,7 @@ async function loadStudentsInfo(alunoId) {
     }
 }
 
+
 function voltarPagina() {
     router.go(-1)
 }

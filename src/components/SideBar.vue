@@ -49,7 +49,7 @@
 
 <script setup>
 import { shallowRef } from 'vue';
-import { ClipboardCheck, List, LogOut, BarChart3, BookCheck } from 'lucide-vue-next';
+import { ClipboardCheck, List, LogOut, BookCheck } from 'lucide-vue-next';
 
 defineProps({
   isExpanded: {
@@ -61,7 +61,6 @@ defineProps({
 const menuItems = shallowRef([
     { to: '/registrar-presenca', label: 'Registrar Presença', icon: ClipboardCheck },
     { to: '/dashboard', label: 'Lista de Presenças', icon: List },
-    { to: '/relatorios', label: 'Relatórios', icon: BarChart3 },
     { to: '/disciplineManager', label: 'Gerenciar Disciplinas', icon: BookCheck },
     { to: '/login', label: 'Sair', icon: LogOut },
 ]);

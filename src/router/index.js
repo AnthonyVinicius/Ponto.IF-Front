@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Dashboard from "../views/Dashboard.vue";
 import LoginView from "../views/LoginView.vue";
 import RegistrarPresenca from "../views/RegistrarPresenca.vue";
-import ReportsView from "../views/ReportsView.vue";
+import ReportsView from "../views/DisciplineReport.vue";
 import DisciplineManager from "../views/DisciplineManager.vue";
 
 const router = createRouter({
@@ -28,11 +28,6 @@ const router = createRouter({
       component: RegistrarPresenca,
     },
     {
-      path: "/relatorios",
-      name: "Relatorios",
-      component: ReportsView,
-    },
-    {
       path: "/disciplineManager",
       name: "Disciplinas",
       component: DisciplineManager,
@@ -41,6 +36,11 @@ const router = createRouter({
       path: "/dashboard/:userId/user",
       name: "userDashboard",
       component: () => import("../views/UserDashboard.vue"),
+    },
+    {
+      path: "/dashboard/:disciplineId/report",
+      name: "diciplineReport",
+      component: () => import("../views/DisciplineReport.vue"),
     },
   ],
 });
