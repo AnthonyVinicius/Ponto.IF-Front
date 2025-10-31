@@ -40,7 +40,7 @@
       <div class="flex-1 border border-gray-200 p-4 rounded-md">
         <h2 class="text-base font-semibold text-[#1C5E27] mb-3">Disciplinas</h2>
         <table class="table-auto w-full border-collapse border border-gray-300 shadow-sm">
-          <thead >
+          <thead>
             <tr>
               <th class="border p-2">Nome do Aluno</th>
               <th class="border p-2">Curso</th>
@@ -51,12 +51,18 @@
           <tbody>
             <tr class="hover:bg-gray-50">
               <td class="p-2 text-center">{{ "N/A" }}</td>
-              <td class="p-2 text-center">{{  0 }}</td>
+              <td class="p-2 text-center">{{ 0 }}</td>
               <td class="p-2 text-center">{{ 0 }}</td>
               <td class="p-2 text-center font-medium"></td>
             </tr>
           </tbody>
         </table>
+      </div>
+      <div class="mt-6 text-right">
+        <button @click="voltarPagina"
+          class="bg-[#1C5E27] hover:bg-[#174a20] text-white font-semibold px-4 py-2 rounded-md transition-colors">
+          Voltar
+        </button>
       </div>
     </div>
   </BaseLayout>
@@ -64,10 +70,11 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router'
 import BaseLayout from '../components/BaseLayout.vue';
 import FrequencyChart from '../components/FrequencyChart.vue';
 import CourseDAO from '../services/CourseDAO';
-
+const router = useRouter()
 
 const disciplineInfos = ref('')
 
@@ -79,4 +86,7 @@ async function loadDisciplinesInfo(disciplineId) {
   }
 }
 
+function voltarPagina() {
+  router.go(-1)
+}
 </script>
