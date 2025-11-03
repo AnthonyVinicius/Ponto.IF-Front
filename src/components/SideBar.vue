@@ -32,7 +32,7 @@
       </div>
       <span
         v-show="isExpanded"
-        class="text-xl font-bold text-gray-800 transition-opacity duration-200 whitespace-nowrap"
+        class="text-xm font-bold text-gray-800 transition-opacity duration-200 whitespace-nowrap"
       >
         Admin de Presenças
       </span>
@@ -111,6 +111,7 @@ const router = useRouter()
 const menuItems = shallowRef([
   { to: '/registrar-presenca', label: 'Registrar Presença', icon: ClipboardCheck },
   { to: '/dashboard', label: 'Lista de Presenças', icon: List },
+  { to: '/allStudants', label: 'Lista de Alunos', icon: BookCheck },
   { to: '/disciplinas', label: 'Gerenciar Disciplinas', icon: BookCheck }
 ])
 

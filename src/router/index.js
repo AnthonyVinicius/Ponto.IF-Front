@@ -3,6 +3,7 @@ import Dashboard from "../views/Dashboard.vue"
 import LoginView from "../views/LoginView.vue"
 import RegistrarPresenca from "../views/RegistrarPresenca.vue"
 import DisciplineManager from "../views/DisciplineManager.vue"
+import AllStudants from "../views/AllStudants.vue"
 
 const router = createRouter({
   history: createWebHistory(),
@@ -25,6 +26,11 @@ const router = createRouter({
       path: "/registrar-presenca",
       name: "RegistrarPresenca",
       component: RegistrarPresenca,
+    },
+    {
+      path: "/allStudants",
+      name: "AllStudants",
+      component: AllStudants,
     },
     {
       path: "/disciplinas",
