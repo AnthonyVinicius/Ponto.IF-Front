@@ -111,7 +111,6 @@ const router = useRouter()
 const menuItems = shallowRef([
   { to: '/registrar-presenca', label: 'Registrar Presença', icon: ClipboardCheck },
   { to: '/dashboard', label: 'Lista de Presenças', icon: List },
-  { to: '/allStudants', label: 'Lista de Alunos', icon: BookCheck },
   { to: '/disciplinas', label: 'Gerenciar Disciplinas', icon: BookCheck }
 ])
 

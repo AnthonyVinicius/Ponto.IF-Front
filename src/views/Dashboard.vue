@@ -2,7 +2,6 @@
 import { ref, computed, onMounted } from "vue"
 import { useRouter } from "vue-router"
 import { Search, Calendar, Filter, Download, Circle } from "lucide-vue-next"
-
 import BaseLayout from "../components/BaseLayout.vue"
 import BaseButton from "../components/BaseButton.vue"
 import Filters from "../components/Filters.vue"
@@ -21,9 +20,19 @@ const isLoading = ref(false)
 const errorMessage = ref("")
 
 const router = useRouter()
+const records = ref([])
 
 function goToUserDashboard(userId) {
   router.push(`/dashboard/${userId}/user`)
+}
+
+
+async function loadRecords(){
+  try {
+     records.value = await RecordsDAO.getAll()
+  } catch (error) {
+    console.log("Erro ao carregar records" ,Error)
+  }
 }
 
 const loadStudents = async () => {
@@ -72,7 +81,11 @@ const frequenciaPercent = computed(() => {
   return Math.round((presentes / students.value.length) * 100)
 })
 
-onMounted(loadStudents)
+onMounted(async() =>{
+  await loadStudents()
+  await loadRecords()
+  console.log(records.value)
+})
 </script>
 
 <template>
