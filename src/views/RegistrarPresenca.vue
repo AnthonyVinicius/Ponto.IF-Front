@@ -107,6 +107,7 @@ import { ref, onMounted } from "vue";
 import UserDAO from "../services/UserDAO";
 import { useNotification } from "../composables/useNotification";
 import Notification from "../components/Notification.vue";
+import BiometricDAO from "../services/BiometricDAO";
 
 const usuarios = ref([]);
 const mensagem = ref("");
