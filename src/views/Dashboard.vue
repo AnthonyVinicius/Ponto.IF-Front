@@ -8,7 +8,7 @@ import BaseButton from "../components/BaseButton.vue"
 import Filters from "../components/Filters.vue"
 import Table from "../components/Table.vue"
 import FrequencyChart from "../components/FrequencyChart.vue"
-// import UserDao from "../services/UserDAO"
+import UserDao from "../services/UserDAO"
 
 const disciplinaAtual = ref("Projeto em Computação")
 const searchQuery = ref("")
@@ -31,50 +31,15 @@ const loadStudents = async () => {
   errorMessage.value = ""
 
   try {
-    // const response = await UserDao.getAll()
-    // const data = Array.isArray(response) ? response : []
-    // students.value = data.map((student) => ({
-    //   ...student,
-    //   hour: "--/--",
-    //   date: "xx/xx/xxxx",
-    //   status: "Atraso",
-    // }))
+    const response = await UserDao.getAll()
+    const data = Array.isArray(response) ? response : []
 
-    // Dados mockados
-    students.value = [
-      {
-        id: 1,
-        name: "João Silva",
-        email: "joao.silva@ifpe.edu.br",
-        hour: "07:45",
-        date: "30/10/2025",
-        status: "Presente"
-      },
-      {
-        id: 2,
-        name: "Maria Souza",
-        email: "maria.souza@ifpe.edu.br",
-        hour: "08:10",
-        date: "30/10/2025",
-        status: "Atraso"
-      },
-      {
-        id: 3,
-        name: "Carlos Lima",
-        email: "carlos.lima@ifpe.edu.br",
-        hour: "--/--",
-        date: "30/10/2025",
-        status: "Falta"
-      },
-      {
-        id: 4,
-        name: "Ana Beatriz",
-        email: "ana.beatriz@ifpe.edu.br",
-        hour: "07:50",
-        date: "30/10/2025",
-        status: "Presente"
-      }
-    ]
+    students.value = data.map((student) => ({
+      ...student,
+      hour: student.hour || "--/--",
+      date: student.date || "xx/xx/xxxx",
+      status: student.status || "Atraso",
+    }))
   } catch (error) {
     console.error("Erro ao carregar estudantes:", error)
     errorMessage.value = "Não foi possível carregar os estudantes."
@@ -101,7 +66,6 @@ const filteredStudents = computed(() => {
 
 const totalStudents = computed(() => filteredStudents.value.length)
 
-// Simula cálculo de frequência baseado nos mockados
 const frequenciaPercent = computed(() => {
   if (!students.value.length) return 0
   const presentes = students.value.filter((s) => s.status === "Presente").length
