@@ -151,11 +151,19 @@ async function loadStudentsInfo(alunoId) {
   }
 }
 
-function biometricRegister(alunoId){
+async function biometricRegister() {
   try {
-    biometricDAO.insert(alunoId)
+    const userId = aluno.value.id;
+    if (!userId) {
+      alert("ID do aluno não encontrado.");
+      return;
+    }
+
+    const res = await BiometricDAO.insertBiometric(userId);
+    console.log("Biometria registrada com sucesso:", res);
+    alert("Biometria registrada com sucesso!");
   } catch (error) {
-    console.log("Erro ao cadastrar Biometria", error)
+    console.error("Erro ao cadastrar Biometria:", error);
   }
 }
 

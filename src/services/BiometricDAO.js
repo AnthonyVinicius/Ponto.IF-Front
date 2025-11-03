@@ -6,8 +6,13 @@ class BiometricDAO extends GenericDAO {
     super(ApiRegistry.biometric, "/biometric");
   }
 
-    async insertSample(data) {
-    const res = await this.api.post(`${this.baseURL}/sample`, data);
+  async insertSample(userRole) {
+    const res = await this.api.post(`${this.baseURL}/sample`, { role: userRole });
+    return res.data;
+  }
+
+  async insertBiometric(userId) {
+    const res = await this.api.post(`${this.baseURL}/register`, { userId });
     return res.data;
   }
 }
