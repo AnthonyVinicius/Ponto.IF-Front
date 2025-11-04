@@ -107,6 +107,7 @@ import { ref, onMounted } from "vue";
 import UserDAO from "../services/UserDAO";
 import { useNotification } from "../composables/useNotification";
 import Notification from "../components/Notification.vue";
+import BiometricDAO from "../services/BiometricDAO";
 
 const usuarios = ref([]);
 const mensagem = ref("");
@@ -123,25 +124,39 @@ onMounted(async () => {
 
 async function capturarDigital() {
   try {
-    const userId = 1;
-    const user = usuarios.value.find((u) => u.id === userId);
+    const role = "STUDENT";
+    const res = await BiometricDAO.insertSample(role);
 
-    if (!user) {
-      mensagem.value = "Usuário não encontrado!";
-      mensagemTipo.value = "erro";
-      addNotification(mensagem.value, "error");
-      return;
-    }
-
-    await UserDAO.update(userId, { status: "Presente" });
-
-    mensagem.value = `Presença registrada para ${user.nome}!`;
-    mensagemTipo.value = "sucesso";
-    addNotification(mensagem.value, "success");
+    console.log("Amostra biométrica capturada com sucesso:", res);
+    alert("Amostra biométrica capturada com sucesso!");
   } catch (error) {
-    mensagem.value = "Erro ao registrar presença.";
-    mensagemTipo.value = "erro";
-    addNotification(mensagem.value, "error");
+    console.error("Erro ao confirmar presença:", error);
+    alert("Erro ao capturar a digital. Verifique o console para detalhes.");
   }
 }
+
+
+// async function capturarDigital() {
+//   try {
+//     const userId = 1;
+//     const user = usuarios.value.find((u) => u.id === userId);
+
+//     if (!user) {
+//       mensagem.value = "Usuário não encontrado!";
+//       mensagemTipo.value = "erro";
+//       addNotification(mensagem.value, "error");
+//       return;
+//     }
+
+//     await UserDAO.update(userId, { status: "Presente" });
+
+//     mensagem.value = `Presença registrada para ${user.nome}!`;
+//     mensagemTipo.value = "sucesso";
+//     addNotification(mensagem.value, "success");
+//   } catch (error) {
+//     mensagem.value = "Erro ao registrar presença.";
+//     mensagemTipo.value = "erro";
+//     addNotification(mensagem.value, "error");
+//   }
+// }
 </script>

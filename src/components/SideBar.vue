@@ -32,7 +32,7 @@
       </div>
       <span
         v-show="isExpanded"
-        class="text-xl font-bold text-gray-800 transition-opacity duration-200 whitespace-nowrap"
+        class="text-xm font-bold text-gray-800 transition-opacity duration-200 whitespace-nowrap"
       >
         Admin de Presenças
       </span>
