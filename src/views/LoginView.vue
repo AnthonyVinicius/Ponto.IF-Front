@@ -26,14 +26,22 @@
             placeholder="••••••••">
         </div>
 
+        <div v-if="errorMessage" class="p-3 text-sm text-center text-red-800 bg-red-200 rounded-lg">
+          {{ errorMessage }}
+        </div>
         <div>
           <button type="submit"
-            class="w-full px-4 py-3 font-semibold text-green-700 bg-white rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50 transition-colors">
-            Entrar
+            :disabled="isLoading"
+            class="w-full px-4 py-3 font-semibold text-green-700 bg-white rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50 transition-colors
+                   disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed">
+            
+            {{ isLoading ? 'Entrando...' : 'Entrar' }}
+          
           </button>
-        </div>
+          </div>
       </form>
     </div>
+    
     <router-link to="/registrar-presenca">
       <button
         class="bg-[#1C5E27] text-white font-semibold py-2.5 px-5 rounded-lg flex items-center gap-2 hover:bg-[#154b1f] transition-colors text-sm absolute bottom-6 right-6">
@@ -57,25 +65,33 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'; // 1. Importe o 'ref'
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { login } from '../services/authService';
 
 const router = useRouter();
 
-// 2. Crie as variáveis reativas para o email e a senha
 const email = ref('');
 const password = ref('');
+const isLoading = ref(false);
+const errorMessage = ref(null);
 
-function handleLogin() {
-  // Agora você pode usar os valores digitados pelo usuário
-  console.log("Tentativa de login com:");
-  console.log("Email:", email.value);
-  console.log("Senha:", password.value);
+async function handleLogin() {
+  isLoading.value = true;
+  errorMessage.value = null;
 
-  // Aqui você faria a chamada para sua API para validar o login
-  // if (loginValido) {
-    localStorage.setItem('user-token', 'meu-token-secreto-123');
+  try {
+    await login(email.value, password.value);
     router.push('/dashboard');
-  // }
+
+  } catch (error) {
+    if (error.response && [400, 401, 403].includes(error.response.status)) {
+      errorMessage.value = 'Usuário ou senha inválidos.';
+    } else {
+      errorMessage.value = 'Houve um problema ao tentar fazer login. Tente novamente.';
+    }
+  } finally {
+    isLoading.value = false;
+  }
 }
 </script>
