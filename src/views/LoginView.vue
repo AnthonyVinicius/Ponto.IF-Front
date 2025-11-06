@@ -67,46 +67,29 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios'; 
+import { login } from '../services/authService';
 
 const router = useRouter();
 
-
 const email = ref('');
 const password = ref('');
-
-
 const isLoading = ref(false);
 const errorMessage = ref(null);
 
-const API_BASE_URL = 'http://132.226.159.21:8080';
-
 async function handleLogin() {
-  
   isLoading.value = true;
   errorMessage.value = null;
 
   try {
-    const payload = {
-      email: email.value,
-      password: password.value
-    };
-
-    const response = await axios.post(`${API_BASE_URL}/auth/login`, payload);
-    const token = response.data.token; 
-
-    localStorage.setItem('user-token', token);
-    router.push('/dashboard'); 
+    await login(email.value, password.value);
+    router.push('/dashboard');
 
   } catch (error) {
-    console.error("Erro no login:", error);
-
-    if (error.response && (error.response.status === 401 || error.response.status === 400 || error.response.status === 403)) {
+    if (error.response && [400, 401, 403].includes(error.response.status)) {
       errorMessage.value = 'Usuário ou senha inválidos.';
     } else {
       errorMessage.value = 'Houve um problema ao tentar fazer login. Tente novamente.';
     }
-
   } finally {
     isLoading.value = false;
   }
