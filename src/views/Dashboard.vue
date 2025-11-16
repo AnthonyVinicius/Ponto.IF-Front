@@ -58,20 +58,32 @@ const loadStudents = async () => {
 }
 
 const filteredStudents = computed(() => {
-  let alunos = [...students.value]
+  let alunos = Array.isArray(students.value) ? [...students.value] : []
 
-  if (searchQuery.value) {
-    alunos = alunos.filter((aluno) =>
-      aluno.name?.toLowerCase().includes(searchQuery.value.toLowerCase())
-    )
-  }
+  return alunos.filter((aluno) => {
+    const matchesSearch = aluno.name.toLowerCase().includes(searchQuery.value.toLowerCase())
 
-  if (status.value !== "All") {
-    alunos = alunos.filter((aluno) => aluno.status === status.value)
-  }
+    const matchesDate = selectedDate.value ? aluno.date === selectedDate.value : true
 
-  return alunos
+    const matchesStatus = status.value === "All" || aluno.status === status.value
+
+    return matchesSearch && matchesDate && matchesStatus
+  })
 })
+
+function handleUpdateStatus({ index, newStatus }) {
+  const alunoFiltrado = filteredStudents.value[index];
+
+  if (!alunoFiltrado) return;
+
+  const realIndex = students.value.findIndex(
+    (aluno) => aluno.id === alunoFiltrado.id
+  );
+
+  if (realIndex !== -1) {
+    students.value[realIndex].status = newStatus;
+  }
+}
 
 const totalStudents = computed(() => filteredStudents.value.length)
 
@@ -102,8 +114,7 @@ onMounted(async() =>{
 
           <div class="mt-2">
             <span
-              class="inline-flex items-center gap-x-1.5 rounded-full bg-[#1C5E27] px-3 py-1 text-xs font-medium text-white"
-            >
+              class="inline-flex items-center gap-x-1.5 rounded-full bg-[#1C5E27] px-3 py-1 text-xs font-medium text-white">
               <Circle class="h-2 w-2 fill-green-300" />
               {{ disciplinaAtual }}
             </span>
@@ -115,24 +126,17 @@ onMounted(async() =>{
             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <Search class="h-5 w-5 text-gray-400" />
             </div>
-            <input
-              v-model="searchQuery"
-              type="text"
-              placeholder="Pesquisar por aluno"
-              class="rounded-md border border-gray-200 bg-white py-2 pl-10 pr-4 text-sm font-medium text-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            />
+            <input v-model="searchQuery" type="text" placeholder="Pesquisar por aluno"
+              class="rounded-md border border-gray-200 bg-white py-2 pl-10 pr-4 text-sm font-medium text-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" />
           </div>
 
           <div class="relative">
             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <Calendar class="h-5 w-5 text-gray-400" />
             </div>
-            <input
-              v-model="selectedDate"
-              type="date"
+            <input v-model="selectedDate" type="date"
               class="rounded-md border border-gray-200 bg-white py-1.5 pl-10 pr-2 text-sm font-medium text-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-              disabled
-            />
+               />
           </div>
 
           <Filters v-model="status" :options="statusOptions" disabled>
@@ -159,7 +163,7 @@ onMounted(async() =>{
         </div>
 
         <div v-else>
-          <Table :alunos="filteredStudents" @aluno-click="goToUserDashboard" />
+          <Table :alunos="filteredStudents" @aluno-click="goToUserDashboard" @update-status="handleUpdateStatus" />
           <p class="text-sm text-gray-500 mt-4">
             Total de estudantes: {{ totalStudents }}
           </p>

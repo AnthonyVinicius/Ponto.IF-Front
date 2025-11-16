@@ -1,6 +1,6 @@
 describe('Site E2E Tests', () => {
   beforeEach(() => {
-    cy.visit('/')
+    cy.visit('http://localhost:5173')
   })
 
   it('should load the home page and show registrar presença', () => {
