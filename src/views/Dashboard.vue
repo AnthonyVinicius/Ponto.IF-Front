@@ -91,12 +91,17 @@ onMounted(async() =>{
 <template>
   <BaseLayout>
     <div class="bg-white rounded-lg p-6 shadow-sm font-roboto">
-      <div class="topbar flex flex-wrap items-center justify-between gap-4">
-        <div class="my-6 max-w-md">
-          <FrequencyChart :percentage="frequenciaPercent" class="border border-gray-200" />
+
+      <div class="topbar flex flex-wrap items-center justify-between gap-6">
+
+        <div class="my-6 max-w-md w-full flex justify-center sm:justify-start">
+          <FrequencyChart
+            :percentage="frequenciaPercent"
+            class="border border-gray-200 w-full max-w-[260px]"
+          />
         </div>
 
-        <div class="title">
+        <div class="title w-full sm:w-auto">
           <h1 class="text-xl font-bold text-gray-800">Lista de Presença</h1>
           <p class="text-sm text-gray-500">Usuários cadastrados</p>
 
@@ -110,8 +115,9 @@ onMounted(async() =>{
           </div>
         </div>
 
-        <div class="flex items-center gap-3">
-          <div class="relative">
+        <div class="flex flex-wrap w-full sm:w-auto items-center gap-3">
+
+          <div class="relative w-full sm:w-auto">
             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <Search class="h-5 w-5 text-gray-400" />
             </div>
@@ -119,33 +125,39 @@ onMounted(async() =>{
               v-model="searchQuery"
               type="text"
               placeholder="Pesquisar por aluno"
-              class="rounded-md border border-gray-200 bg-white py-2 pl-10 pr-4 text-sm font-medium text-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              class="rounded-md border border-gray-200 bg-white py-2 pl-10 pr-4 text-sm font-medium text-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 w-full sm:w-auto"
             />
           </div>
 
-          <div class="relative">
+          <div class="relative w-full sm:w-auto">
             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <Calendar class="h-5 w-5 text-gray-400" />
             </div>
             <input
               v-model="selectedDate"
               type="date"
-              class="rounded-md border border-gray-200 bg-white py-1.5 pl-10 pr-2 text-sm font-medium text-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              class="rounded-md border border-gray-200 bg-white py-2 pl-10 pr-2 text-sm font-medium text-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 w-full sm:w-auto"
               disabled
             />
           </div>
 
-          <Filters v-model="status" :options="statusOptions" disabled>
+          <Filters
+            v-model="status"
+            :options="statusOptions"
+            disabled
+            class="w-full sm:w-auto"
+          >
             <template #icon>
               <Filter class="h-5 w-5 text-gray-500" />
             </template>
             Status: {{ status }}
           </Filters>
 
-          <BaseButton>
+          <BaseButton class="w-full sm:w-auto justify-center">
             <Download class="h-5 w-5 mr-2" />
             Export CSV
           </BaseButton>
+
         </div>
       </div>
 
@@ -165,6 +177,7 @@ onMounted(async() =>{
           </p>
         </div>
       </div>
+
     </div>
   </BaseLayout>
 </template>

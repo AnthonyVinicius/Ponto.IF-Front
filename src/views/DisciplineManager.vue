@@ -44,14 +44,16 @@ onMounted(async () => {
 <template>
   <BaseLayout>
     <div class="bg-white p-4">
+
       <div class="topbar flex flex-wrap items-center justify-between gap-4 m-3">
-        <div>
+        <div class="w-full sm:w-auto">
           <h1 class="text-lg font-semibold text-gray-800">Gerenciamento de Disciplinas</h1>
           <p class="text-sm text-gray-600">Selecione uma disciplina para visualizar e gerenciar os alunos</p>
         </div>
 
-        <div class="flex items-center gap-3">
-          <div class="relative">
+        <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+
+          <div class="relative flex-1 sm:flex-none min-w-[200px]">
             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <Search class="h-5 w-5 text-gray-400" />
             </div>
@@ -59,19 +61,21 @@ onMounted(async () => {
               v-model="searchQuery"
               type="text"
               placeholder="Pesquisar disciplina"
-              class="rounded-md border border-gray-200 bg-white py-2 pl-10 pr-4 text-sm font-medium text-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              class="rounded-md border border-gray-200 bg-white py-2 pl-10 pr-4 text-sm font-medium
+                     text-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 w-full"
             />
           </div>
 
-          <BaseButton>
+          <BaseButton class="w-full sm:w-auto justify-center">
             <Plus class="h-5 w-5 mr-2" />
             Nova Disciplina
           </BaseButton>
 
-          <BaseButton>
+          <BaseButton class="w-full sm:w-auto justify-center">
             <Download class="h-5 w-5 mr-2" />
             Exportar CSV
           </BaseButton>
+
         </div>
       </div>
 
@@ -85,9 +89,11 @@ onMounted(async () => {
         class="border border-gray-200 p-4 rounded-md m-3"
       >
         <div class="flex gap-2 items-center mb-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
+
           <h2
             class="text-base font-semibold text-[#1C5E27] cursor-pointer hover:text-indigo-800 transition"
             @click="goToDisciplineReport(discipline.id)"
@@ -96,29 +102,44 @@ onMounted(async () => {
           </h2>
         </div>
 
-        <table class="table-auto w-full border border-gray-300 m-3 shadow-sm">
-          <thead>
-            <tr>
-              <th class="border border-gray-300 p-2">Nome do Aluno</th>
-              <th class="border border-gray-300 p-2">Matrícula</th>
-              <th class="border border-gray-300 p-2">Presenças</th>
-              <th class="border border-gray-300 p-2">Ausências</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="aluno in alunos"
-              :key="aluno.id"
-              class="hover:bg-gray-50 cursor-pointer transition"
-              title="Clique para ver detalhes do aluno"
-            >
-              <td class="p-3 text-center">{{ aluno.nome }}</td>
-              <td class="p-3 text-center">{{ aluno.matricula }}</td>
-              <td class="p-3 text-center">{{ aluno.presencas }}</td>
-              <td class="p-3 text-center">{{ aluno.ausencias }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="hidden md:block">
+          <table class="table-auto w-full border border-gray-300 m-3 shadow-sm">
+            <thead>
+              <tr>
+                <th class="border border-gray-300 p-2">Nome do Aluno</th>
+                <th class="border border-gray-300 p-2">Matrícula</th>
+                <th class="border border-gray-300 p-2">Presenças</th>
+                <th class="border border-gray-300 p-2">Ausências</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="aluno in alunos"
+                :key="aluno.id"
+                class="hover:bg-gray-50 cursor-pointer transition"
+                title="Clique para ver detalhes do aluno"
+              >
+                <td class="p-3 text-center">{{ aluno.nome }}</td>
+                <td class="p-3 text-center">{{ aluno.matricula }}</td>
+                <td class="p-3 text-center">{{ aluno.presencas }}</td>
+                <td class="p-3 text-center">{{ aluno.ausencias }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="md:hidden space-y-3 px-2">
+          <div
+            v-for="aluno in alunos"
+            :key="aluno.id"
+            class="border border-gray-300 rounded-lg p-4 shadow-sm hover:bg-gray-50 transition cursor-pointer"
+          >
+            <p class="font-semibold text-gray-800">{{ aluno.nome }}</p>
+            <p class="text-sm text-gray-700"><span class="font-medium">Matrícula:</span> {{ aluno.matricula }}</p>
+            <p class="text-sm text-gray-700"><span class="font-medium">Presenças:</span> {{ aluno.presencas }}</p>
+            <p class="text-sm text-gray-700"><span class="font-medium">Ausências:</span> {{ aluno.ausencias }}</p>
+          </div>
+        </div>
 
         <div class="flex justify-center p-3">
           <button class="text-base font-semibold text-[#1C5E27] hover:text-[#15461f] transition cursor-pointer">
@@ -129,3 +150,4 @@ onMounted(async () => {
     </div>
   </BaseLayout>
 </template>
+

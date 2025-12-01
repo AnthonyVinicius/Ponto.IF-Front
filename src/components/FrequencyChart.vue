@@ -1,25 +1,32 @@
 <template>
-  <div class="bg-white rounded-lg p-6 shadow-sm">
+  <div class="bg-white rounded-lg p-6 shadow-sm w-full">
+
     <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide text-center">
       Gráfico de Frequência
     </h3>
-    <div class="flex items-center justify-center gap-6 mt-4">
+
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-6 mt-6">
+
       <div
-        class="relative w-32 h-32 rounded-full flex items-center justify-center"
+        class="relative rounded-full flex items-center justify-center w-28 h-28 sm:w-36 sm:h-36"
         :style="chartStyle"
       >
-        <div class="absolute w-[7.5rem] h-[7.5rem] bg-white rounded-full"></div>
+        <div class="absolute bg-white rounded-full w-[6.5rem] h-[6.5rem] sm:w-[8.2rem] sm:h-[8.2rem]"></div>
       </div>
 
-      <div class="relative text-left">
-        <span class="text-4xl font-bold text-gray-900">{{ percentage }}%</span>
+      <div class="text-center sm:text-left">
+        <span class="text-3xl sm:text-4xl font-bold text-gray-900">{{ percentage }}%</span>
         <p class="text-gray-500 text-sm leading-tight">
           De presença<br />registrada
         </p>
       </div>
+
     </div>
+
   </div>
 </template>
+
+
 
 <script setup>
 import { computed } from 'vue';
