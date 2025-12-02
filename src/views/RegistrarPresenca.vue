@@ -123,15 +123,27 @@ onMounted(async () => {
 });
 
 async function capturarDigital() {
+  mensagem.value = ""; // Limpa mensagens antigas de texto estático, se houver
+  
   try {
     const role = "STUDENT";
+    // A chamada agora espera receber dados do usuário (conforme alteração no backend)
     const res = await BiometricDAO.insertSample(role);
 
-    console.log("Amostra biométrica capturada com sucesso:", res);
-    alert("Amostra biométrica capturada com sucesso!");
+    console.log("Amostra biométrica capturada:", res);
+
+    // Se o backend retornar o objeto do usuário, usamos o nome dele
+    const nomeAluno = res.name || "Aluno";
+
+    // Dispara a notificação FLASH (verde/sucesso)
+    // Não precisa de botão fechar, ela some sozinha via useNotification.js
+    addNotification(`Presença confirmada: ${nomeAluno}`, "success");
+
   } catch (error) {
     console.error("Erro ao confirmar presença:", error);
-    alert("Erro ao capturar a digital. Verifique o console para detalhes.");
+    
+    // Dispara a notificação FLASH (vermelha/erro)
+    addNotification("Biometria não reconhecida. Tente novamente.", "error");
   }
 }
 
@@ -159,4 +171,6 @@ async function capturarDigital() {
 //     addNotification(mensagem.value, "error");
 //   }
 // }
+
+
 </script>
