@@ -89,18 +89,46 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { AuthService } from "../services/AuthService";
+import { useUserStore } from "../stores/user";
 
 const router = useRouter();
+const userStore = useUserStore();
 
-const email = ref('');
-const password = ref('');
+const email = ref("");
+const password = ref("");
+const loading = ref(false);
 
-function handleLogin() {
-  console.log("Tentativa de login:", email.value, password.value);
+async function handleLogin() {
+  if (!email.value || !password.value) {
+    alert("Preencha email e senha!");
+    return;
+  }
 
-  localStorage.setItem('user-token', 'meu-token-secreto-123');
-  router.push('/dashboard');
+  loading.value = true;
+
+  try {
+    const session = await AuthService.login(email.value, password.value);
+
+    userStore.setSession(session.token, session.userId);
+    userStore.setUserData({
+      name: session.name,
+      role: session.role
+    });
+    
+    if (session.role === "ADMIN" || session.role === "PROFESSOR") {
+      router.push("/dashboard");
+    } else {
+      router.push("/noAccess");
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Email ou senha incorretos!");
+  } finally {
+    loading.value = false;
+  }
 }
 </script>

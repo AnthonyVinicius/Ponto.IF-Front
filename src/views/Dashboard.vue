@@ -84,7 +84,6 @@ const frequenciaPercent = computed(() => {
 onMounted(async() =>{
   await loadStudents()
   await loadRecords()
-  console.log(records.value)
 })
 </script>
 

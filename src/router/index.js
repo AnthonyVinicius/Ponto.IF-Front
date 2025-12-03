@@ -3,7 +3,7 @@ import Dashboard from "../views/Dashboard.vue"
 import LoginView from "../views/LoginView.vue"
 import RegistrarPresenca from "../views/RegistrarPresenca.vue"
 import DisciplineManager from "../views/DisciplineManager.vue"
-
+import NoAccess from "../views/NoAccess.vue"
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -15,6 +15,11 @@ const router = createRouter({
       path: "/dashboard",
       name: "Dashboard",
       component: Dashboard,
+    },
+        {
+      path: "/noAccess",
+      name: "NoAccess",
+      component: NoAccess,
     },
     {
       path: "/login",
