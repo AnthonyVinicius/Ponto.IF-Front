@@ -119,7 +119,7 @@ async function handleLogin() {
     });
     
     if (session.role === "ADMIN" || session.role === "PROFESSOR") {
-      router.push("/dashboard");
+      router.push("/disciplinas");
     } else {
       router.push("/noAccess");
     }

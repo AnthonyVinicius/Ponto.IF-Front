@@ -1,9 +1,9 @@
-import { createRouter, createWebHistory } from "vue-router"
-import Dashboard from "../views/Dashboard.vue"
-import LoginView from "../views/LoginView.vue"
-import RegistrarPresenca from "../views/RegistrarPresenca.vue"
-import DisciplineManager from "../views/DisciplineManager.vue"
-import NoAccess from "../views/NoAccess.vue"
+import { createRouter, createWebHistory } from "vue-router";
+import Dashboard from "../views/Dashboard.vue";
+import LoginView from "../views/LoginView.vue";
+import RegistrarPresenca from "../views/RegistrarPresenca.vue";
+import DisciplineManager from "../views/DisciplineManager.vue";
+import NoAccess from "../views/NoAccess.vue";
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -16,7 +16,7 @@ const router = createRouter({
       name: "Dashboard",
       component: Dashboard,
     },
-        {
+    {
       path: "/noAccess",
       name: "NoAccess",
       component: NoAccess,
@@ -42,11 +42,12 @@ const router = createRouter({
       component: () => import("../views/UserDashboard.vue"),
     },
     {
-      path: "/disciplinas/:disciplineId/gerenciar",
+      path: "/disciplinas/:offeringId/gerenciar",
       name: "DisciplineReport",
       component: () => import("../views/DisciplineReport.vue"),
+      props: true,
     },
   ],
-})
+});
 
-export default router
+export default router;

@@ -39,6 +39,7 @@
     </div>
 
     <div class="mt-10 flex flex-1 flex-col justify-between">
+
       <nav :class="['-mx-3 space-y-3', isExpanded ? '' : 'flex flex-col items-center']">
         <router-link
           v-for="item in menuItems"
@@ -60,33 +61,31 @@
         </router-link>
       </nav>
 
-    <div class="mt-10 flex flex-1 flex-col justify-between">
-      <nav :class="['-mx-3 space-y-3', isExpanded ? '' : 'flex flex-col items-center']">
-        <router-link v-for="item in currentMenu" :key="item.label" :to="item.to" :title="!isExpanded ? item.label : ''"
-          :class="[
-            'flex items-center rounded-lg px-3 py-3 text-gray-600 hover:bg-[#1C5E27] hover:text-white transition-colors',
-            isExpanded ? '' : 'justify-center'
-          ]">
-          <component :is="item.icon" class="h-6 w-6" />
-          <span v-show="isExpanded" class="mx-4 text-base font-medium whitespace-nowrap">{{ item.label }}</span>
-        </router-link>
-      </nav>
-
       <div class="mt-6 border-t pt-4">
-        <div :class="['flex items-center', isExpanded ? 'gap-x-3' : 'justify-center']">
-          <button @click="logout" :title="!isExpanded ? 'Sair' : ''"
-            class="flex w-full items-center rounded-lg px-3 py-3 text-gray-600 hover:bg-red-600 hover:text-white transition-colors"
-            :class="isExpanded ? '' : 'justify-center'">
-            <LogOut class="h-6 w-6" />
-            <span v-show="isExpanded" class="mx-4 text-base font-medium whitespace-nowrap">Sair</span>
-          </button>
-        </div>
+
+        <button
+          @click="logout"
+          :title="!isExpanded ? 'Sair' : ''"
+          class="flex w-full items-center rounded-lg px-3 py-3 text-gray-600 hover:bg-red-600 hover:text-white transition-colors"
+          :class="[isExpanded ? '' : 'justify-center']"
+        >
+          <LogOut class="h-6 w-6" />
+          <span
+            v-show="isExpanded"
+            class="mx-4 text-base font-medium whitespace-nowrap"
+          >
+            Sair
+          </span>
+        </button>
 
         <div v-show="isExpanded" class="flex flex-col gap-3 mt-4 border-t pt-4">
-          <h1 class="text-base font-semibold text-gray-700 whitespace-nowrap">{{ usuarioNome }}</h1>
+          <h1 class="text-base font-semibold text-gray-700 whitespace-nowrap">
+            {{ usuarioNome }}
+          </h1>
         </div>
+
       </div>
-    </div>
+
     </div>
   </aside>
 </template>
@@ -103,8 +102,6 @@ const userStore = useUserStore()
 defineProps({
   isExpanded: { type: Boolean, required: true }
 })
-
-
 
 const menuItems = shallowRef([
   { to: '/registrar-presenca', label: 'Registrar Presença', icon: ClipboardCheck },
