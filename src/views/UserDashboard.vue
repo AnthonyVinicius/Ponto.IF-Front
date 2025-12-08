@@ -73,12 +73,13 @@
                   <td
                     class="p-2 text-center font-medium"
                     :class="{
+                      // O uso da classe de cor permanece baseado no status original (Aprovado/Reprovado)
                       'text-green-600': disciplina.situation === 'Aprovado',
                       'text-red-600': disciplina.situation === 'Reprovado',
                       'text-gray-500': !disciplina.situation,
                     }"
                   >
-                    {{ disciplina.situation || "Indefinida" }}
+                    {{ getStatusLabel(disciplina.situation) || "Indefinida" }}
                   </td>
                 </tr>
               </tbody>
@@ -110,12 +111,23 @@ import FrequencyChart from "../components/FrequencyChart.vue";
 const route = useRoute();
 const router = useRouter();
 
+// ✅ NOVA FUNÇÃO: Traduz os rótulos de status conforme a Issue #47
+function getStatusLabel(situation) {
+  if (situation === 'Aprovado') {
+    return 'Cursando'; // Substitui 'Aprovado' por 'Cursando'
+  }
+  if (situation === 'Reprovado') {
+    return 'Reprovado por Falta'; // Substitui 'Reprovado' por 'Falta'
+  }
+  return situation; // Mantém qualquer outro status (Indefinida, Trancado, etc.)
+}
+
 const aluno = ref({
-  name: "",
-  email: "",
-  registration: "",
-  role: "",
-  disciplines: [],
+  name: "",
+  email: "",
+  registration: "",
+  role: "",
+  disciplines: [],
 });
 
 const isLoading = ref(true);
@@ -123,11 +135,12 @@ const error = ref(null);
 const frequenciaPercent = ref(0);
 
 onMounted(async () => {
-  const alunoId = route.params.userId;
-  await loadStudentsInfo(alunoId);
+  const alunoId = route.params.userId;
+  await loadStudentsInfo(alunoId);
 });
 
 async function loadStudentsInfo(alunoId) {
+// ... seu código loadStudentsInfo continua aqui ...
   try {
     isLoading.value = true;
     const response = await UserDAO.getById(alunoId);
@@ -226,7 +239,8 @@ async function loadStudentsInfo(alunoId) {
 }
 
 async function biometricRegister() {
-  try {
+  try {
+// ... seu código biometricRegister continua aqui ...
     const userId = aluno.value.id;
     if (!userId) {
       alert("ID do aluno não encontrado.");
@@ -243,6 +257,6 @@ async function biometricRegister() {
 }
 
 function voltarPagina() {
-  router.go(-1);
+  router.go(-1);
 }
 </script>
