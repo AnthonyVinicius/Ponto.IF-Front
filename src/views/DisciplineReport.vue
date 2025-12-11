@@ -29,7 +29,7 @@
       <div class="flex flex-wrap items-center gap-4 mb-6 border-b pb-4">
         <div class="flex-1 min-w-[200px]">
           <h1 class="text-xl font-semibold text-gray-800">
-            Gerenciar Disciplina: {{ disciplineInfo?.name || "Carregando..." }}
+            Disciplina: {{ disciplineInfo?.name || "Carregando..." }}
           </h1>
 
           <div class="text-sm text-gray-600 mt-1 space-y-1">
@@ -244,7 +244,7 @@ async function comecarAula() {
   try {
     const offeringId = route.params.offeringId;
 
-    // ClassSessionDAO.startSession(offeringId)
+    ClassSessionDAO.startSession(offeringId)
 
     alert("Aula iniciada com sucesso!");
 
