@@ -1,6 +1,7 @@
 <template>
   <BaseLayout>
     <div class="bg-white m-4 p-6 rounded-md shadow-md">
+
       <div v-if="isLoading" class="text-center text-gray-600 py-10">
         Carregando dados do aluno...
       </div>
@@ -10,8 +11,9 @@
       </div>
 
       <div v-else>
-        <div class="flex">
-          <section class="mb-6">
+
+        <div class="flex flex-wrap gap-4 items-start">
+          <section class="min-w-[200px] w-full sm:w-auto">
             <p class="text-lg font-semibold text-gray-800">
               {{ aluno.name || "Aluno" }}
             </p>
@@ -25,79 +27,113 @@
               Cargo: {{ aluno.role || "Estudante" }}
             </p>
           </section>
-          <div class="mt-6 text-right ms-auto">
+
+          <div class="mt-2 sm:mt-0 sm:ms-auto w-full sm:w-auto">
             <button
               @click="biometricRegister(alunoId)"
-              class="bg-[#1C5E27] hover:bg-[#174a20] text-white font-semibold px-4 py-2 rounded-md transition-colors"
+              class="bg-[#1C5E27] hover:bg-[#174a20] text-white font-semibold px-4 py-2 rounded-md transition-colors w-full sm:w-auto"
             >
               Registrar Biometria
             </button>
           </div>
         </div>
-        <section
-          class="flex flex-col md:flex-row gap-6 border border-gray-200 p-4 rounded-md"
-        >
-          <div class="flex-1 border border-gray-200 p-4 rounded-md text-center">
+
+        <section class="flex flex-col md:flex-row gap-6 border border-gray-200 p-4 rounded-md mt-6">
+
+          <div class="flex-1 border border-gray-200 p-4 rounded-md text-center min-w-[250px]">
             <h2 class="text-base font-semibold text-[#1C5E27] mb-3">
               Gráfico de Frequência
             </h2>
             <FrequencyChart :percentage="frequenciaPercent" />
           </div>
 
-          <div class="flex-1 border border-gray-200 p-4 rounded-md">
+          <div class="flex-1 border border-gray-200 p-4 rounded-md min-w-[250px]">
             <h2 class="text-base font-semibold text-[#1C5E27] mb-3">
               Disciplinas
             </h2>
-            <table
-              class="table-auto w-full border-collapse border border-gray-300 shadow-sm"
-            >
-              <thead class="bg-gray-100">
-                <tr>
-                  <th class="border p-2">Disciplina</th>
-                  <th class="border p-2">Presenças</th>
-                  <th class="border p-2">Ausências</th>
-                  <th class="border p-2">Situação</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  v-for="(disciplina, index) in aluno.disciplines"
-                  :key="index"
-                  class="hover:bg-gray-50"
-                >
-                  <td class="p-2 text-center">
-                    {{ disciplina.name || "N/A" }}
-                  </td>
-                  <td class="p-2 text-center">{{ disciplina.present || 0 }}</td>
-                  <td class="p-2 text-center">{{ disciplina.absent || 0 }}</td>
-                  <td
-                    class="p-2 text-center font-medium"
-                    :class="{
-                      'text-green-600': disciplina.situation === 'Aprovado',
-                      'text-red-600': disciplina.situation === 'Reprovado',
-                      'text-gray-500': !disciplina.situation,
-                    }"
+
+            <div class="hidden md:block">
+              <table class="table-auto w-full border-collapse border border-gray-300 shadow-sm">
+                <thead class="bg-gray-100">
+                  <tr>
+                    <th class="border p-2">Disciplina</th>
+                    <th class="border p-2">Presenças</th>
+                    <th class="border p-2">Ausências</th>
+                    <th class="border p-2">Situação</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="(disciplina, index) in aluno.disciplines"
+                    :key="index"
+                    class="hover:bg-gray-50 text-center"
                   >
-                    {{ disciplina.situation || "Indefinida" }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                    <td class="p-2">{{ disciplina.name || "N/A" }}</td>
+                    <td class="p-2">{{ disciplina.present || 0 }}</td>
+                    <td class="p-2">{{ disciplina.absent || 0 }}</td>
+                    <td
+                      class="p-2 font-medium"
+                      :class="{
+                        'text-green-600': disciplina.situation === 'Aprovado',
+                        'text-red-600': disciplina.situation === 'Reprovado',
+                        'text-gray-500': !disciplina.situation,
+                      }"
+                    >
+                      {{ disciplina.situation || "Indefinida" }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="md:hidden space-y-3">
+              <div
+                v-for="(disciplina, index) in aluno.disciplines"
+                :key="index"
+                class="border border-gray-300 rounded-lg p-4 shadow-sm"
+              >
+                <p class="font-semibold text-gray-800">{{ disciplina.name || "N/A" }}</p>
+
+                <p class="text-sm text-gray-700">
+                  <span class="font-medium">Presenças:</span>
+                  {{ disciplina.present || 0 }}
+                </p>
+
+                <p class="text-sm text-gray-700">
+                  <span class="font-medium">Ausências:</span>
+                  {{ disciplina.absent || 0 }}
+                </p>
+
+                <p
+                  class="mt-1 font-medium"
+                  :class="{
+                    'text-green-600': disciplina.situation === 'Aprovado',
+                    'text-red-600': disciplina.situation === 'Reprovado',
+                    'text-gray-500': !disciplina.situation,
+                  }"
+                >
+                  {{ disciplina.situation || "Indefinida" }}
+                </p>
+              </div>
+            </div>
+
           </div>
         </section>
 
         <div class="mt-6 text-right">
           <button
             @click="voltarPagina"
-            class="bg-[#1C5E27] hover:bg-[#174a20] text-white font-semibold px-4 py-2 rounded-md transition-colors"
+            class="bg-[#1C5E27] hover:bg-[#174a20] text-white font-semibold px-4 py-2 rounded-md transition-colors w-full sm:w-auto"
           >
             Voltar
           </button>
         </div>
+
       </div>
     </div>
   </BaseLayout>
 </template>
+
 
 <script setup>
 import { onMounted, ref } from "vue";

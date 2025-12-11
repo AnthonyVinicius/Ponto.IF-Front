@@ -39,6 +39,7 @@
     </div>
 
     <div class="mt-10 flex flex-1 flex-col justify-between">
+
       <nav :class="['-mx-3 space-y-3', isExpanded ? '' : 'flex flex-col items-center']">
         <router-link
           v-for="item in menuItems"
@@ -61,66 +62,56 @@
       </nav>
 
       <div class="mt-6 border-t pt-4">
-        <div :class="['flex w-full items-center', isExpanded ? 'gap-x-3' : 'justify-center']">
-          <button
-            @click="logout"
-            :title="!isExpanded ? 'Sair' : ''"
-            class="flex w-full transform items-center rounded-lg px-3 py-3 text-gray-600 transition-colors duration-300 hover:bg-red-600 hover:text-white"
-            :class="isExpanded ? '' : 'justify-center'"
+
+        <button
+          @click="logout"
+          :title="!isExpanded ? 'Sair' : ''"
+          class="flex w-full items-center rounded-lg px-3 py-3 text-gray-600 hover:bg-red-600 hover:text-white transition-colors"
+          :class="[isExpanded ? '' : 'justify-center']"
+        >
+          <LogOut class="h-6 w-6" />
+          <span
+            v-show="isExpanded"
+            class="mx-4 text-base font-medium whitespace-nowrap"
           >
-            <LogOut class="h-6 w-6" />
-            <span
-              v-show="isExpanded"
-              class="mx-4 text-base font-medium whitespace-nowrap"
-            >
-              Sair
-            </span>
-          </button>
+            Sair
+          </span>
+        </button>
+
+        <div v-show="isExpanded" class="flex flex-col gap-3 mt-4 border-t pt-4">
+          <h1 class="text-base font-semibold text-gray-700 whitespace-nowrap">
+            {{ usuarioNome }}
+          </h1>
         </div>
 
-        <div
-          v-show="isExpanded"
-          class="flex flex-grow items-center justify-between mt-4"
-        >
-          <div class="transition-opacity duration-200">
-            <h1 class="text-base font-semibold text-gray-700 whitespace-nowrap">
-              {{ usuario.nome }}
-            </h1>
-            <p class="text-sm text-gray-500">{{ usuario.cargo }}</p>
-          </div>
-        </div>
       </div>
+
     </div>
   </aside>
 </template>
 
 <script setup>
-import { shallowRef, reactive } from 'vue'
+import { shallowRef, computed } from 'vue'
 import { ClipboardCheck, List, BookCheck, LogOut } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
-
-defineProps({
-  isExpanded: {
-    type: Boolean,
-    required: true
-  }
-})
+import { useUserStore } from '../stores/user'
 
 const router = useRouter()
+const userStore = useUserStore()
+
+defineProps({
+  isExpanded: { type: Boolean, required: true }
+})
 
 const menuItems = shallowRef([
   { to: '/registrar-presenca', label: 'Registrar Presença', icon: ClipboardCheck },
-  { to: '/dashboard', label: 'Lista de Presenças', icon: List },
   { to: '/disciplinas', label: 'Gerenciar Disciplinas', icon: BookCheck }
 ])
 
-const usuario = reactive({
-  nome: 'Ericlecio',
-  cargo: 'Administrador'
-})
+const usuarioNome = computed(() => userStore.name ?? "Usuário")
 
 function logout() {
-  // Exemplo: localStorage.removeItem('token')
+  userStore.logout()
   router.push('/login')
 }
 </script>
