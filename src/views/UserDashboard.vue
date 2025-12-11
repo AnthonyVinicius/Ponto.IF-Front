@@ -168,20 +168,94 @@ async function loadStudentsInfo(alunoId) {
     isLoading.value = true;
     const response = await UserDAO.getById(alunoId);
 
+    // 🧩 Dados mock para preencher campos vazios
+    const mockData = {
+      name: "Lucas Henrique Souza",
+      email: "lucas.souza@ifpe.edu.br",
+      registration: "2022104507",
+      role: "Estudante",
+      frequencyPercent: 87,
+      disciplines: [
+        {
+          name: "Programação Web",
+          present: 36,
+          absent: 4,
+          situation: "Aprovado",
+        },
+        {
+          name: "Banco de Dados",
+          present: 30,
+          absent: 10,
+          situation: "Aprovado",
+        },
+        {
+          name: "Redes de Computadores",
+          present: 25,
+          absent: 15,
+          situation: "Reprovado",
+        },
+        {
+          name: "Engenharia de Software",
+          present: 32,
+          absent: 8,
+          situation: "Aprovado",
+        },
+      ],
+    };
+
     aluno.value = {
       id: response.id,
-      name: response.name || "",
-      email: response.email || "",
-      registration: response.registration || "",
-      role: response.role || "Estudante",
-      frequencyPercent: response.frequencyPercent || 0,
-      disciplines: response.disciplines || [],
+      name: response.name || mockData.name,
+      email: response.email || mockData.email,
+      registration: response.registration || mockData.registration,
+      role: response.role || mockData.role,
+      frequencyPercent: response.frequencyPercent ?? mockData.frequencyPercent,
+      disciplines:
+        response.disciplines?.length > 0
+          ? response.disciplines
+          : mockData.disciplines,
     };
 
     frequenciaPercent.value = aluno.value.frequencyPercent;
   } catch (err) {
     console.error(err);
-    error.value = "Erro ao carregar os dados do aluno.";
+    error.value = "Erro ao carregar os dados do aluno. (modo demonstração)";
+    // 🧩 Usa mock completo se a requisição falhar
+    aluno.value = {
+      id: alunoId,
+      name: "Lucas Henrique Souza",
+      email: "lucas.souza@ifpe.edu.br",
+      registration: "2022104507",
+      role: "Estudante",
+      frequencyPercent: 87,
+      disciplines: [
+        {
+          name: "Programação Web",
+          present: 36,
+          absent: 4,
+          situation: "Aprovado",
+        },
+        {
+          name: "Banco de Dados",
+          present: 30,
+          absent: 10,
+          situation: "Aprovado",
+        },
+        {
+          name: "Redes de Computadores",
+          present: 25,
+          absent: 15,
+          situation: "Reprovado",
+        },
+        {
+          name: "Engenharia de Software",
+          present: 32,
+          absent: 8,
+          situation: "Aprovado",
+        },
+      ],
+    };
+    frequenciaPercent.value = aluno.value.frequencyPercent;
   } finally {
     isLoading.value = false;
   }
@@ -200,6 +274,7 @@ async function biometricRegister() {
     alert("Biometria registrada com sucesso!");
   } catch (error) {
     console.error("Erro ao cadastrar Biometria:", error);
+    alert("Falha ao registrar biometria (modo demonstração).");
   }
 }
 
