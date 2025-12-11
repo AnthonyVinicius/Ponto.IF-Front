@@ -3,7 +3,7 @@ import { ApiRegistry } from "../api/ApiRegistry";
 
 class TeacherDAO extends GenericDAO {
   constructor() {
-    super(ApiRegistry.pontoIF, "/user/teachers");
+    super(ApiRegistry.pontoIF, "/user/teacher");
   }
 
   async getOfferings(teacherId) {
@@ -12,7 +12,7 @@ class TeacherDAO extends GenericDAO {
     }
 
     return this.api
-      .get(`${this.baseURL}/${teacherId}/offerings`, {
+      .get(`${this.baseURL}s/${teacherId}/offerings`, {
         params: { id: teacherId }
       })
       .then(res => res.data);

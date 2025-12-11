@@ -105,7 +105,6 @@ defineProps({
 
 const menuItems = shallowRef([
   { to: '/registrar-presenca', label: 'Registrar Presença', icon: ClipboardCheck },
-  { to: '/dashboard', label: 'Lista de Presenças', icon: List },
   { to: '/disciplinas', label: 'Gerenciar Disciplinas', icon: BookCheck }
 ])
 

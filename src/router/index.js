@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Dashboard from "../views/Dashboard.vue";
+import Dashboard from "../views/DisciplineDashboard.vue";
 import LoginView from "../views/LoginView.vue";
 import RegistrarPresenca from "../views/RegistrarPresenca.vue";
 import DisciplineManager from "../views/DisciplineManager.vue";
@@ -12,9 +12,10 @@ const router = createRouter({
       redirect: "/registrar-presenca",
     },
     {
-      path: "/dashboard",
+      path: "/dashboard/:offeringId",
       name: "Dashboard",
       component: Dashboard,
+      props: true,
     },
     {
       path: "/noAccess",
