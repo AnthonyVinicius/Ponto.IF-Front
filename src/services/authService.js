@@ -1,16 +1,41 @@
-import { registerIfApi } from "../api/registerIfApi";
+import { ApiRegistry } from "../api/ApiRegistry";
+import { decodeJWT } from "../utils/decodeJWT";
 
-export async function login(email, password) {
-  try {
-    const payload = { email, password };
-    const response = await registerIfApi.post("/auth/login", payload);
+export const AuthService = {
+  async login(email, password) {
+    const response = await ApiRegistry.registerIF.post("/auth/login", {
+      email,
+      password,
+    });
+    const token = response.data;
 
-    const token = response.data.token;
+    const payload = decodeJWT(token);
+
+    const userId = payload.id ?? payload.userId ?? payload.sub;
+    const name = payload.name;
+    const role = payload.role;
+
+    this.saveSession({
+      token,
+      userId,
+      name,
+      role,
+    });
+
+    return { token, userId, name, role };
+  },
+
+  saveSession({ token, userId, name, role }) {
     localStorage.setItem("user-token", token);
+    localStorage.setItem("user-id", userId);
+    localStorage.setItem("user-name", name);
+    localStorage.setItem("user-role", role);
+  },
 
-    return token;
-  } catch (error) {
-    console.error("Erro no authService:", error);
-    throw error;
-  }
-}
+  logout() {
+    localStorage.removeItem("user-token");
+    localStorage.removeItem("user-id");
+    localStorage.removeItem("user-name");
+    localStorage.removeItem("user-role");
+  },
+};
