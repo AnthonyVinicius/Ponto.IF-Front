@@ -133,6 +133,7 @@ onMounted(() => loadOfferingData());
         </div>
 
         <div class="flex flex-wrap w-full sm:w-auto items-center gap-3">
+
           <div class="relative w-full sm:w-auto">
             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <Search class="h-5 w-5 text-gray-400" />
@@ -155,6 +156,13 @@ onMounted(() => loadOfferingData());
             </template>
             Status: {{ status }}
           </Filters>
+
+          <button
+            class="bg-red-700 hover:bg-red-500 text-white font-semibold px-4 py-2 rounded-md transition-colors w-full sm:w-auto"
+          >
+            Finalizar Aula
+          </button>
+
         </div>
       </div>
 
@@ -177,3 +185,4 @@ onMounted(() => loadOfferingData());
     </div>
   </BaseLayout>
 </template>
+

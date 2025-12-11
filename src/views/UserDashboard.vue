@@ -30,7 +30,7 @@
 
           <div class="mt-2 sm:mt-0 sm:ms-auto w-full sm:w-auto">
             <button
-              @click="biometricRegister(alunoId)"
+              @click="biometricRegister()"
               class="bg-[#1C5E27] hover:bg-[#174a20] text-white font-semibold px-4 py-2 rounded-md transition-colors w-full sm:w-auto"
             >
               Registrar Biometria
@@ -68,18 +68,18 @@
                     :key="index"
                     class="hover:bg-gray-50 text-center"
                   >
-                    <td class="p-2">{{ disciplina.name || "N/A" }}</td>
-                    <td class="p-2">{{ disciplina.present || 0 }}</td>
-                    <td class="p-2">{{ disciplina.absent || 0 }}</td>
+                    <td class="p-2">{{ disciplina.name }}</td>
+                    <td class="p-2">{{ disciplina.present }}</td>
+                    <td class="p-2">{{ disciplina.absent }}</td>
                     <td
                       class="p-2 font-medium"
                       :class="{
                         'text-green-600': disciplina.situation === 'Aprovado',
                         'text-red-600': disciplina.situation === 'Reprovado',
-                        'text-gray-500': !disciplina.situation,
+                        'text-gray-500': disciplina.situation === 'Indefinida',
                       }"
                     >
-                      {{ disciplina.situation || "Indefinida" }}
+                      {{ disciplina.situation }}
                     </td>
                   </tr>
                 </tbody>
@@ -92,16 +92,16 @@
                 :key="index"
                 class="border border-gray-300 rounded-lg p-4 shadow-sm"
               >
-                <p class="font-semibold text-gray-800">{{ disciplina.name || "N/A" }}</p>
+                <p class="font-semibold text-gray-800">{{ disciplina.name }}</p>
 
                 <p class="text-sm text-gray-700">
                   <span class="font-medium">Presenças:</span>
-                  {{ disciplina.present || 0 }}
+                  {{ disciplina.present }}
                 </p>
 
                 <p class="text-sm text-gray-700">
                   <span class="font-medium">Ausências:</span>
-                  {{ disciplina.absent || 0 }}
+                  {{ disciplina.absent }}
                 </p>
 
                 <p
@@ -109,10 +109,10 @@
                   :class="{
                     'text-green-600': disciplina.situation === 'Aprovado',
                     'text-red-600': disciplina.situation === 'Reprovado',
-                    'text-gray-500': !disciplina.situation,
+                    'text-gray-500': disciplina.situation === 'Indefinida',
                   }"
                 >
-                  {{ disciplina.situation || "Indefinida" }}
+                  {{ disciplina.situation }}
                 </p>
               </div>
             </div>
@@ -134,19 +134,24 @@
   </BaseLayout>
 </template>
 
-
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+
 import BaseLayout from "../components/BaseLayout.vue";
-import UserDAO from "../services/UserDAO";
-import BiometricDAO from "../services/BiometricDAO";
 import FrequencyChart from "../components/FrequencyChart.vue";
+
+import UserDAO from "../services/UserDAO";
+import EnrollmentDAO from "../services/EnrollmentDAO";
+import SubjectOfferingDAO from "../services/SubjectOfferingDAO";
+import SubjectDAO from "../services/SubjectDAO";
+import BiometricDAO from "../services/BiometricDAO";
 
 const route = useRoute();
 const router = useRouter();
 
 const aluno = ref({
+  id: null,
   name: "",
   email: "",
   registration: "",
@@ -158,104 +163,60 @@ const isLoading = ref(true);
 const error = ref(null);
 const frequenciaPercent = ref(0);
 
-onMounted(async () => {
-  const alunoId = route.params.userId;
-  await loadStudentsInfo(alunoId);
-});
+const subjects = ref({});
+const offerings = ref([]);
+const enrollments = ref([]);
 
-async function loadStudentsInfo(alunoId) {
+async function loadSubjects() {
+  const data = await SubjectDAO.getAll();
+  subjects.value = Object.fromEntries(data.map(s => [s.id, s.name]));
+}
+
+async function loadOfferings() {
+  offerings.value = await SubjectOfferingDAO.getAll();
+}
+
+async function loadEnrollments(studentId) {
+  enrollments.value = await EnrollmentDAO.getByStudent(studentId);
+}
+
+function buildDisciplineList() {
+  aluno.value.disciplines = enrollments.value.map(en => {
+    const offer = offerings.value.find(o => o.id === en.subjectOfferingId);
+
+    return {
+      name: subjects.value[offer.subjectId],
+      present: en.presentCount ?? 0,
+      absent: en.absentCount ?? 0,
+      situation:
+        en.status === "APPROVED"
+          ? "Aprovado"
+          : en.status === "FAILED"
+          ? "Reprovado"
+          : "Indefinida",
+    };
+  });
+}
+
+async function loadStudentsInfo(studentId) {
   try {
     isLoading.value = true;
-    const response = await UserDAO.getById(alunoId);
 
-    // 🧩 Dados mock para preencher campos vazios
-    const mockData = {
-      name: "Lucas Henrique Souza",
-      email: "lucas.souza@ifpe.edu.br",
-      registration: "2022104507",
-      role: "Estudante",
-      frequencyPercent: 87,
-      disciplines: [
-        {
-          name: "Programação Web",
-          present: 36,
-          absent: 4,
-          situation: "Aprovado",
-        },
-        {
-          name: "Banco de Dados",
-          present: 30,
-          absent: 10,
-          situation: "Aprovado",
-        },
-        {
-          name: "Redes de Computadores",
-          present: 25,
-          absent: 15,
-          situation: "Reprovado",
-        },
-        {
-          name: "Engenharia de Software",
-          present: 32,
-          absent: 8,
-          situation: "Aprovado",
-        },
-      ],
-    };
+    const response = await UserDAO.getById(studentId);
 
-    aluno.value = {
-      id: response.id,
-      name: response.name || mockData.name,
-      email: response.email || mockData.email,
-      registration: response.registration || mockData.registration,
-      role: response.role || mockData.role,
-      frequencyPercent: response.frequencyPercent ?? mockData.frequencyPercent,
-      disciplines:
-        response.disciplines?.length > 0
-          ? response.disciplines
-          : mockData.disciplines,
-    };
+    aluno.value.id = response.id;
+    aluno.value.name = response.name;
+    aluno.value.email = response.email;
+    aluno.value.registration = response.registration;
+    aluno.value.role = response.role;
+    frequenciaPercent.value = response.frequencyPercent || 0;
 
-    frequenciaPercent.value = aluno.value.frequencyPercent;
+    await loadSubjects();
+    await loadOfferings();
+    await loadEnrollments(studentId);
+    buildDisciplineList();
   } catch (err) {
-    console.error(err);
-    error.value = "Erro ao carregar os dados do aluno. (modo demonstração)";
-    // 🧩 Usa mock completo se a requisição falhar
-    aluno.value = {
-      id: alunoId,
-      name: "Lucas Henrique Souza",
-      email: "lucas.souza@ifpe.edu.br",
-      registration: "2022104507",
-      role: "Estudante",
-      frequencyPercent: 87,
-      disciplines: [
-        {
-          name: "Programação Web",
-          present: 36,
-          absent: 4,
-          situation: "Aprovado",
-        },
-        {
-          name: "Banco de Dados",
-          present: 30,
-          absent: 10,
-          situation: "Aprovado",
-        },
-        {
-          name: "Redes de Computadores",
-          present: 25,
-          absent: 15,
-          situation: "Reprovado",
-        },
-        {
-          name: "Engenharia de Software",
-          present: 32,
-          absent: 8,
-          situation: "Aprovado",
-        },
-      ],
-    };
-    frequenciaPercent.value = aluno.value.frequencyPercent;
+    error.value = "Erro ao carregar os dados do aluno.";
   } finally {
     isLoading.value = false;
   }
@@ -264,21 +225,19 @@ async function loadStudentsInfo(alunoId) {
 async function biometricRegister() {
   try {
     const userId = aluno.value.id;
-    if (!userId) {
-      alert("ID do aluno não encontrado.");
-      return;
-    }
-
     const res = await BiometricDAO.insertBiometric(userId);
-    console.log("Biometria registrada com sucesso:", res);
     alert("Biometria registrada com sucesso!");
   } catch (error) {
-    console.error("Erro ao cadastrar Biometria:", error);
-    alert("Falha ao registrar biometria (modo demonstração).");
+    alert("Falha ao registrar biometria.");
   }
 }
 
 function voltarPagina() {
   router.go(-1);
 }
+
+onMounted(async () => {
+  const alunoId = route.params.userId;
+  await loadStudentsInfo(alunoId);
+});
 </script>
