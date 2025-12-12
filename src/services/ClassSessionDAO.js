@@ -3,11 +3,13 @@ import { ApiRegistry } from "../api/ApiRegistry";
 
 class ClassSessionDAO extends GenericDAO {
   constructor() {
-    super(ApiRegistry.pontoIF, "/class-session");
+    super(ApiRegistry.pontoIF, "/api/class-session");
   }
 
-  startSession(offerId) {
-    return this.api.post(`/class-session/${offerId}`);
+  async getByOffering(offeringId) {
+    return this.api
+      .get(`/api/class-session/${offeringId}`)
+      .then(res => res.data);
   }
 }
 

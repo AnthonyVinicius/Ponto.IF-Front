@@ -24,7 +24,6 @@ const disciplinaAtual = ref("Carregando...");
 const students = ref([]);
 
 const searchQuery = ref("");
-
 const status = ref("All");
 const statusOptions = ["All", "Presente", "Atraso", "Falta"];
 
@@ -35,12 +34,16 @@ function goToUserDashboard(studentId) {
   router.push(`/dashboard/${studentId}/user`);
 }
 
+function registrarPresenca() {
+  router.push("/registrar-presenca");
+}
+
 async function loadOfferingData() {
   try {
     isLoading.value = true;
 
     const offerings = await TeacherDAO.getOfferings(teacherId);
-    const offer = offerings.find((o) => o.id == offeringId);
+    const offer = offerings.find(o => o.id == offeringId);
 
     if (!offer) {
       errorMessage.value = "Disciplina não encontrada.";
@@ -53,7 +56,7 @@ async function loadOfferingData() {
     const enrollments = await EnrollmentDAO.getStudentsByOffering(offer.id);
 
     const list = await Promise.all(
-      enrollments.map(async (e) => {
+      enrollments.map(async e => {
         const st = await StudentDAO.getById(e.studentId);
 
         return {
@@ -65,12 +68,13 @@ async function loadOfferingData() {
           hour: "--:--",
           date: "--/--/----",
           presencas: 0,
-          ausencias: 0,
+          ausencias: 0
         };
       })
     );
 
     students.value = list;
+
   } catch (err) {
     console.error(err);
     errorMessage.value = "Erro ao carregar os dados da disciplina.";
@@ -79,17 +83,28 @@ async function loadOfferingData() {
   }
 }
 
+async function finalizarAula() {
+  try {
+    await SubjectDAO.finalizeOffering(offeringId, teacherId);
+    alert("Aula finalizada com sucesso!");
+    router.push("/disciplinas");
+  } catch (error) {
+    console.error(error);
+    alert("Erro ao finalizar a aula.");
+  }
+}
+
 const filteredStudents = computed(() => {
   let list = [...students.value];
 
   if (searchQuery.value) {
-    list = list.filter((s) =>
+    list = list.filter(s =>
       s.name?.toLowerCase().includes(searchQuery.value.toLowerCase())
     );
   }
 
   if (status.value !== "All") {
-    list = list.filter((s) => s.status === status.value);
+    list = list.filter(s => s.status === status.value);
   }
 
   return list;
@@ -99,11 +114,11 @@ const totalStudents = computed(() => filteredStudents.value.length);
 
 const frequenciaPercent = computed(() => {
   if (students.value.length === 0) return 0;
-  const presentes = students.value.filter((s) => s.status === "Presente").length;
+  const presentes = students.value.filter(s => s.status === "Presente").length;
   return Math.round((presentes / students.value.length) * 100);
 });
 
-onMounted(() => loadOfferingData());
+onMounted(loadOfferingData);
 </script>
 
 <template>
@@ -142,15 +157,11 @@ onMounted(() => loadOfferingData());
               v-model="searchQuery"
               type="text"
               placeholder="Pesquisar por aluno"
-              class="rounded-md border border-gray-200 bg-white py-2 pl-10 pr-4 text-sm font-medium text-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 w-full sm:w-auto"
+              class="rounded-md border border-gray-200 py-2 pl-10 pr-4 text-sm shadow-sm w-full sm:w-auto"
             />
           </div>
 
-          <Filters
-            v-model="status"
-            :options="statusOptions"
-            class="w-full sm:w-auto"
-          >
+          <Filters v-model="status" :options="statusOptions">
             <template #icon>
               <Filter class="h-5 w-5 text-gray-500" />
             </template>
@@ -158,6 +169,14 @@ onMounted(() => loadOfferingData());
           </Filters>
 
           <button
+            @click="registrarPresenca"
+            class="bg-[#1C5E27] hover:bg-[#174a20] text-white font-semibold px-4 py-2 rounded-md transition-colors w-full sm:w-auto"
+          >
+            Registrar Presença
+          </button>
+
+          <button
+            @click="finalizarAula"
             class="bg-red-700 hover:bg-red-500 text-white font-semibold px-4 py-2 rounded-md transition-colors w-full sm:w-auto"
           >
             Finalizar Aula
@@ -185,4 +204,3 @@ onMounted(() => loadOfferingData());
     </div>
   </BaseLayout>
 </template>
-

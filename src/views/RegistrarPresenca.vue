@@ -16,7 +16,9 @@
           </div>
           <div>
             <h1 class="text-base font-bold text-gray-800">Leitor Biométrico</h1>
-            <p class="text-gray-500 text-sm leading-tight">Conecte o leitor de digitais e capture a presença dos usuários</p>
+            <p class="text-gray-500 text-sm leading-tight">
+              Conecte o leitor de digitais e capture a presença dos usuários
+            </p>
           </div>
         </div>
 
@@ -55,7 +57,7 @@
 
         <div class="border border-gray-300 rounded-2xl flex flex-col items-center justify-center py-6">
           <div class="p-4 m-2 rounded-2xl border border-gray-200">
-            <img src="../img/biometria.png" alt="Impressão Digital" class="w-32 h-32 md:w-40 md:h-40 text-gray-400 mb-4">
+            <img src="../img/biometria.png" alt="Impressão Digital" class="w-32 h-32 md:w-40 md:h-40 mb-4">
           </div>
 
           <button @click="capturarDigital"
@@ -70,39 +72,42 @@
             Capturar digital do usuário
           </button>
 
-          <p class="mt-3 text-xs text-gray-500">Posicione o dedo firmemente no sensor</p>
+          <p class="mt-3 text-xs text-gray-500">
+            Posicione o dedo firmemente no sensor
+          </p>
 
           <p
             v-if="mensagem"
             :class="['mt-4 text-sm font-medium',
-            mensagemTipo === 'sucesso' ? 'text-green-600' : 'text-red-600']">
+              mensagemTipo === 'sucesso' ? 'text-green-600' : 'text-red-600']">
             {{ mensagem }}
           </p>
         </div>
       </div>
     </div>
 
-    <router-link to="/login">
-      <button
-        class="bg-[#1C5E27] text-white font-semibold py-2.5 px-4 sm:px-5 rounded-lg flex items-center gap-2 hover:bg-[#154b1f] transition-colors text-xs sm:text-sm fixed bottom-4 right-4 sm:bottom-6 sm:right-6 shadow-lg">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-        </svg>
-        Fazer Login
-      </button>
-    </router-link>
+    <button
+      @click="voltar"
+      class="bg-[#1C5E27] text-white font-semibold py-2.5 px-4 sm:px-5 rounded-lg flex items-center gap-2 hover:bg-[#154b1f] transition-colors text-xs sm:text-sm fixed bottom-4 right-4 sm:bottom-6 sm:right-6 shadow-lg">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6" />
+      </svg>
+      Voltar
+    </button>
   </div>
 </template>
 
-
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+
 import UserDAO from "../services/UserDAO";
+import BiometricDAO from "../services/BiometricDAO";
 import { useNotification } from "../composables/useNotification";
 import Notification from "../components/Notification.vue";
-import BiometricDAO from "../services/BiometricDAO";
+
+const router = useRouter();
 
 const usuarios = ref([]);
 const mensagem = ref("");
@@ -117,41 +122,18 @@ onMounted(async () => {
   }
 });
 
+function voltar() {
+  router.back();
+}
+
 async function capturarDigital() {
   try {
     const role = "STUDENT";
-    const res = await BiometricDAO.insertSample(role);
-
-    console.log("Amostra biométrica capturada com sucesso:", res);
+    await BiometricDAO.insertSample(role);
     alert("Amostra biométrica capturada com sucesso!");
   } catch (error) {
-    console.error("Erro ao confirmar presença:", error);
-    alert("Erro ao capturar a digital. Verifique o console para detalhes.");
+    console.error("Erro ao capturar a digital:", error);
+    alert("Erro ao capturar a digital.");
   }
 }
-
-
-// async function capturarDigital() {
-//   try {
-//     const userId = 1;
-//     const user = usuarios.value.find((u) => u.id === userId);
-
-//     if (!user) {
-//       mensagem.value = "Usuário não encontrado!";
-//       mensagemTipo.value = "erro";
-//       addNotification(mensagem.value, "error");
-//       return;
-//     }
-
-//     await UserDAO.update(userId, { status: "Presente" });
-
-//     mensagem.value = `Presença registrada para ${user.nome}!`;
-//     mensagemTipo.value = "sucesso";
-//     addNotification(mensagem.value, "success");
-//   } catch (error) {
-//     mensagem.value = "Erro ao registrar presença.";
-//     mensagemTipo.value = "erro";
-//     addNotification(mensagem.value, "error");
-//   }
-// }
 </script>

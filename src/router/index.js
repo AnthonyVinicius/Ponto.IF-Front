@@ -9,7 +9,7 @@ const router = createRouter({
   routes: [
     {
       path: "/",
-      redirect: "/registrar-presenca",
+      redirect: "/login",
     },
     {
       path: "/dashboard/:offeringId",
