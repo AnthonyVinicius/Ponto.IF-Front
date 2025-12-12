@@ -13,6 +13,7 @@ import TeacherDAO from "../services/TeacherDAO";
 import SubjectDAO from "../services/SubjectDAO";
 import EnrollmentDAO from "../services/EnrollmentDAO";
 import StudentDAO from "../services/StudentDAO";
+import ClassSessionDAO from "../services/ClassSessionDAO";
 
 const route = useRoute();
 const router = useRouter();
@@ -22,6 +23,7 @@ const teacherId = localStorage.getItem("user-id");
 
 const disciplinaAtual = ref("Carregando...");
 const students = ref([]);
+const classSession = ref(null);
 
 const searchQuery = ref("");
 const status = ref("All");
@@ -35,7 +37,27 @@ function goToUserDashboard(studentId) {
 }
 
 function registrarPresenca() {
-  router.push("/registrar-presenca");
+  if (!classSession.value?.id) {
+    alert("Sessão da aula não encontrada.");
+    return;
+  }
+
+  router.push({
+    path: "/registrar-presenca",
+    query: {
+      classSessionId: Number(classSession.value.id),
+    },
+  });
+}
+
+async function loadClassSession() {
+  try {
+    classSession.value = await ClassSessionDAO.getByOffering(offeringId);
+    console.log(classSession.value);
+  } catch (err) {
+    console.error(err);
+    errorMessage.value = "Erro ao carregar sessão da aula.";
+  }
 }
 
 async function loadOfferingData() {
@@ -43,7 +65,7 @@ async function loadOfferingData() {
     isLoading.value = true;
 
     const offerings = await TeacherDAO.getOfferings(teacherId);
-    const offer = offerings.find(o => o.id == offeringId);
+    const offer = offerings.find((o) => o.id == offeringId);
 
     if (!offer) {
       errorMessage.value = "Disciplina não encontrada.";
@@ -56,7 +78,7 @@ async function loadOfferingData() {
     const enrollments = await EnrollmentDAO.getStudentsByOffering(offer.id);
 
     const list = await Promise.all(
-      enrollments.map(async e => {
+      enrollments.map(async (e) => {
         const st = await StudentDAO.getById(e.studentId);
 
         return {
@@ -68,16 +90,15 @@ async function loadOfferingData() {
           hour: "--:--",
           date: "--/--/----",
           presencas: 0,
-          ausencias: 0
+          ausencias: 0,
         };
       })
     );
 
     students.value = list;
-
   } catch (err) {
     console.error(err);
-    errorMessage.value = "Erro ao carregar os dados da disciplina.";
+    errorMessage.value = "Erro ao carregar dados da disciplina.";
   } finally {
     isLoading.value = false;
   }
@@ -98,13 +119,13 @@ const filteredStudents = computed(() => {
   let list = [...students.value];
 
   if (searchQuery.value) {
-    list = list.filter(s =>
+    list = list.filter((s) =>
       s.name?.toLowerCase().includes(searchQuery.value.toLowerCase())
     );
   }
 
   if (status.value !== "All") {
-    list = list.filter(s => s.status === status.value);
+    list = list.filter((s) => s.status === status.value);
   }
 
   return list;
@@ -114,18 +135,22 @@ const totalStudents = computed(() => filteredStudents.value.length);
 
 const frequenciaPercent = computed(() => {
   if (students.value.length === 0) return 0;
-  const presentes = students.value.filter(s => s.status === "Presente").length;
+  const presentes = students.value.filter(
+    (s) => s.status === "Presente"
+  ).length;
   return Math.round((presentes / students.value.length) * 100);
 });
 
-onMounted(loadOfferingData);
+onMounted(() => {
+  loadClassSession();
+  loadOfferingData();
+});
 </script>
 
 <template>
   <BaseLayout>
     <div class="bg-white rounded-lg p-6 shadow-sm font-roboto">
       <div class="topbar flex flex-wrap items-center justify-between gap-6">
-
         <div class="my-6 max-w-md w-full flex justify-center sm:justify-start">
           <FrequencyChart
             :percentage="frequenciaPercent"
@@ -148,9 +173,10 @@ onMounted(loadOfferingData);
         </div>
 
         <div class="flex flex-wrap w-full sm:w-auto items-center gap-3">
-
           <div class="relative w-full sm:w-auto">
-            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <div
+              class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+            >
               <Search class="h-5 w-5 text-gray-400" />
             </div>
             <input
@@ -181,7 +207,6 @@ onMounted(loadOfferingData);
           >
             Finalizar Aula
           </button>
-
         </div>
       </div>
 

@@ -34,12 +34,18 @@
 
           <div class="text-sm text-gray-600 mt-1 space-y-1">
             <p>
-              <span class="font-medium">Curso:</span> {{ disciplineInfo?.course?.name || "N/A" }} — 
-              <span class="font-medium">Professor:</span> {{ disciplineInfo?.teacher?.name || "N/A" }}
+              <span class="font-medium">Curso:</span>
+              {{ disciplineInfo?.course?.name || "N/A" }} —
+              <span class="font-medium">Professor:</span>
+              {{ disciplineInfo?.teacher?.name || "N/A" }}
             </p>
             <p v-if="disciplineInfo?.term || disciplineInfo?.schedule">
-              <span class="font-medium">Semestre:</span> {{ disciplineInfo.term }} — 
-              <span class="font-medium">Horário:</span> {{ disciplineInfo.schedule?.day }} ({{ disciplineInfo.schedule?.time }})
+              <span class="font-medium">Semestre:</span>
+              {{ disciplineInfo.term }} —
+              <span class="font-medium">Horário:</span>
+              {{ disciplineInfo.schedule?.day }} ({{
+                disciplineInfo.schedule?.time
+              }})
             </p>
           </div>
         </div>
@@ -58,10 +64,14 @@
         </div>
 
         <div class="flex-1 border border-gray-200 p-4 rounded-md min-w-[250px]">
-          <h2 class="text-base font-semibold text-[#1C5E27] mb-3">Resumo de Presença</h2>
+          <h2 class="text-base font-semibold text-[#1C5E27] mb-3">
+            Resumo de Presença
+          </h2>
 
           <div class="hidden md:block">
-            <table class="table-auto w-full border-collapse border border-gray-300 shadow-sm">
+            <table
+              class="table-auto w-full border-collapse border border-gray-300 shadow-sm"
+            >
               <thead class="bg-gray-100">
                 <tr>
                   <th class="border p-2 text-gray-700">Presenças</th>
@@ -71,9 +81,18 @@
               </thead>
               <tbody>
                 <tr class="hover:bg-gray-50 text-center">
-                  <td class="p-2 text-green-700 font-medium">{{ disciplineInfo?.presences }}</td>
-                  <td class="p-2 text-red-700 font-medium">{{ disciplineInfo?.absences }}</td>
-                  <td class="p-2 font-bold">{{ (disciplineInfo?.presences || 0) + (disciplineInfo?.absences || 0) }}</td>
+                  <td class="p-2 text-green-700 font-medium">
+                    {{ disciplineInfo?.presences }}
+                  </td>
+                  <td class="p-2 text-red-700 font-medium">
+                    {{ disciplineInfo?.absences }}
+                  </td>
+                  <td class="p-2 font-bold">
+                    {{
+                      (disciplineInfo?.presences || 0) +
+                      (disciplineInfo?.absences || 0)
+                    }}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -81,17 +100,31 @@
 
           <div class="md:hidden space-y-2">
             <div class="border border-gray-300 rounded-md p-3 bg-gray-50">
-              <p class="text-sm flex justify-between"><span class="font-medium">Presenças:</span> {{ disciplineInfo?.presences }}</p>
-              <p class="text-sm flex justify-between"><span class="font-medium">Ausências:</span> {{ disciplineInfo?.absences }}</p>
-              <hr class="my-2 border-gray-300">
-              <p class="text-sm flex justify-between"><span class="font-bold">Total:</span> {{ (disciplineInfo?.presences || 0) + (disciplineInfo?.absences || 0) }}</p>
+              <p class="text-sm flex justify-between">
+                <span class="font-medium">Presenças:</span>
+                {{ disciplineInfo?.presences }}
+              </p>
+              <p class="text-sm flex justify-between">
+                <span class="font-medium">Ausências:</span>
+                {{ disciplineInfo?.absences }}
+              </p>
+              <hr class="my-2 border-gray-300" />
+              <p class="text-sm flex justify-between">
+                <span class="font-bold">Total:</span>
+                {{
+                  (disciplineInfo?.presences || 0) +
+                  (disciplineInfo?.absences || 0)
+                }}
+              </p>
             </div>
           </div>
         </div>
       </div>
 
       <div class="border border-gray-200 p-4 rounded-md mb-6">
-        <h2 class="text-base font-semibold text-[#1C5E27] mb-3">Alunos Matriculados</h2>
+        <h2 class="text-base font-semibold text-[#1C5E27] mb-3">
+          Alunos Matriculados
+        </h2>
 
         <div v-if="loadingStudents" class="text-center py-4 text-gray-500">
           Carregando alunos...
@@ -99,12 +132,18 @@
 
         <div v-else>
           <div class="hidden md:block">
-            <table class="table-auto w-full border-collapse border border-gray-300 shadow-sm">
+            <table
+              class="table-auto w-full border-collapse border border-gray-300 shadow-sm"
+            >
               <thead class="bg-gray-100">
                 <tr>
                   <th class="border p-2 text-left text-gray-700">Nome</th>
-                  <th class="border p-2 text-center text-gray-700">Matrícula</th>
-                  <th class="border p-2 text-center text-gray-700">Situação Atual</th>
+                  <th class="border p-2 text-center text-gray-700">
+                    Matrícula
+                  </th>
+                  <th class="border p-2 text-center text-gray-700">
+                    Situação Atual
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -114,16 +153,22 @@
                   class="hover:bg-gray-50 transition-colors"
                 >
                   <td class="p-2">{{ student.name }}</td>
-                  <td class="p-2 text-center font-mono text-sm">{{ student.registration }}</td>
+                  <td class="p-2 text-center font-mono text-sm">
+                    {{ student.registration }}
+                  </td>
                   <td
                     class="p-2 text-center font-medium"
-                    :class="student.isPresent ? 'text-green-700' : 'text-gray-500'"
+                    :class="
+                      student.isPresent ? 'text-green-700' : 'text-gray-500'
+                    "
                   >
                     {{ student.isPresent ? "Presente" : "Indefinido" }}
                   </td>
                 </tr>
                 <tr v-if="disciplineInfo?.students?.length === 0">
-                  <td colspan="4" class="p-4 text-center text-gray-500">Nenhum aluno matriculado.</td>
+                  <td colspan="4" class="p-4 text-center text-gray-500">
+                    Nenhum aluno matriculado.
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -138,18 +183,31 @@
               <div class="flex justify-between items-start">
                 <div>
                   <p class="font-semibold text-gray-800">{{ student.name }}</p>
-                  <p class="text-xs text-gray-500 font-mono">{{ student.registration }}</p>
+                  <p class="text-xs text-gray-500 font-mono">
+                    {{ student.registration }}
+                  </p>
                 </div>
-                <span 
+                <span
                   class="text-xs px-2 py-1 rounded-full font-medium"
-                  :class="student.isPresent ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'"
+                  :class="
+                    student.isPresent
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-gray-100 text-gray-600'
+                  "
                 >
                   {{ student.isPresent ? "Presente" : "-" }}
                 </span>
               </div>
-              <p class="text-sm text-gray-700 mt-2"><span class="font-medium">Curso:</span> {{ student.course }}</p>
+              <p class="text-sm text-gray-700 mt-2">
+                <span class="font-medium">Curso:</span> {{ student.course }}
+              </p>
             </div>
-             <p v-if="disciplineInfo?.students?.length === 0" class="text-center text-gray-500">Nenhum aluno matriculado.</p>
+            <p
+              v-if="disciplineInfo?.students?.length === 0"
+              class="text-center text-gray-500"
+            >
+              Nenhum aluno matriculado.
+            </p>
           </div>
         </div>
       </div>
@@ -187,7 +245,7 @@ const disciplineInfo = ref({
   students: [],
   presences: 0,
   absences: 0,
-  frequency: 0
+  frequency: 0,
 });
 
 async function loadDisciplineInfo() {
@@ -205,7 +263,7 @@ async function loadDisciplineInfo() {
       offering.teacherId
         ? TeacherDAO.getById(offering.teacherId)
         : Promise.resolve({ name: "Professor não encontrado" }),
-      EnrollmentDAO.getStudentsByOffering(offeringId)
+      EnrollmentDAO.getStudentsByOffering(offeringId),
     ]);
 
     const students = await Promise.all(
@@ -217,7 +275,7 @@ async function loadDisciplineInfo() {
             name: s.name,
             registration: s.registration,
             course: s.course?.name ?? "Sem curso",
-            isPresent: false
+            isPresent: false,
           };
         } catch {
           return null;
@@ -234,7 +292,7 @@ async function loadDisciplineInfo() {
       presences: 0,
       absences: 0,
       frequency: 0,
-      students: students.filter(Boolean)
+      students: students.filter(Boolean),
     };
   } catch (error) {
     console.error("Erro ao carregar disciplina:", error);
@@ -250,21 +308,18 @@ async function comecarAula() {
 
     await SubjectDAO.startOffering(offeringId, teacherId);
 
-    const classSession = await ClassSessionDAO.getByOffering(offeringId);
-
     alert("Aula iniciada com sucesso!");
 
     router.push({
       name: "Dashboard",
-      params: { classSessionId: classSession.id }
+      params: { offeringId },
     });
-
+    
   } catch (error) {
     console.error(error);
     alert("Erro ao iniciar a aula.");
   }
 }
-
 
 function voltarPagina() {
   router.go(-1);
@@ -272,4 +327,3 @@ function voltarPagina() {
 
 onMounted(loadDisciplineInfo);
 </script>
-
