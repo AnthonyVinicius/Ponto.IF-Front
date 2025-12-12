@@ -8,7 +8,7 @@ class BiometricDAO extends GenericDAO {
 
   async insertSample(role, sessionId) {
     const res = await this.api.post(
-      "/api/biometry/match",
+      `${this.baseURL}/match`,
       {
         role,
         sessionId
