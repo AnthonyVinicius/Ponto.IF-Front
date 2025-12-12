@@ -79,6 +79,19 @@ async function loadOfferingData() {
   }
 }
 
+async function finalizarAula() {
+  try {
+    await SubjectDAO.finalizeOffering(offeringId, teacherId);
+
+    alert("Aula finalizada com sucesso!");
+
+    router.push("/teacherDashboard");
+  } catch (error) {
+    console.error(error);
+    alert("Erro ao finalizar a aula.");
+  }
+}
+
 const filteredStudents = computed(() => {
   let list = [...students.value];
 
@@ -99,33 +112,32 @@ const totalStudents = computed(() => filteredStudents.value.length);
 
 const frequenciaPercent = computed(() => {
   if (students.value.length === 0) return 0;
-  const presentes = students.value.filter((s) => s.status === "Presente").length;
+  const presentes = students.value.filter(
+    (s) => s.status === "Presente"
+  ).length;
   return Math.round((presentes / students.value.length) * 100);
 });
 
-onMounted(() => loadOfferingData());
+onMounted(loadOfferingData);
 </script>
 
 <template>
   <BaseLayout>
     <div class="bg-white rounded-lg p-6 shadow-sm font-roboto">
       <div class="topbar flex flex-wrap items-center justify-between gap-6">
-
         <div class="my-6 max-w-md w-full flex justify-center sm:justify-start">
-          <FrequencyChart
-            :percentage="frequenciaPercent"
-            class="border border-gray-200 w-full max-w-[260px]"
-          />
+          <FrequencyChart :percentage="frequenciaPercent" class="border border-gray-200 w-full max-w-[260px]" />
         </div>
 
         <div class="title w-full sm:w-auto">
           <h1 class="text-xl font-bold text-gray-800">Lista de Presença</h1>
-          <p class="text-sm text-gray-500">Alunos cadastrados na disciplina</p>
+          <p class="text-sm text-gray-500">
+            Alunos cadastrados na disciplina
+          </p>
 
           <div class="mt-2">
             <span
-              class="inline-flex items-center gap-x-1.5 rounded-full bg-[#1C5E27] px-3 py-1 text-xs font-medium text-white"
-            >
+              class="inline-flex items-center gap-x-1.5 rounded-full bg-[#1C5E27] px-3 py-1 text-xs font-medium text-white">
               <Circle class="h-2 w-2 fill-green-300" />
               {{ disciplinaAtual }}
             </span>
@@ -133,36 +145,25 @@ onMounted(() => loadOfferingData());
         </div>
 
         <div class="flex flex-wrap w-full sm:w-auto items-center gap-3">
-
           <div class="relative w-full sm:w-auto">
             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <Search class="h-5 w-5 text-gray-400" />
             </div>
-            <input
-              v-model="searchQuery"
-              type="text"
-              placeholder="Pesquisar por aluno"
-              class="rounded-md border border-gray-200 bg-white py-2 pl-10 pr-4 text-sm font-medium text-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 w-full sm:w-auto"
-            />
+            <input v-model="searchQuery" type="text" placeholder="Pesquisar por aluno"
+              class="rounded-md border border-gray-200 py-2 pl-10 pr-4 text-sm shadow-sm w-full sm:w-auto" />
           </div>
 
-          <Filters
-            v-model="status"
-            :options="statusOptions"
-            class="w-full sm:w-auto"
-          >
+          <Filters v-model="status" :options="statusOptions">
             <template #icon>
               <Filter class="h-5 w-5 text-gray-500" />
             </template>
             Status: {{ status }}
           </Filters>
 
-          <button
-            class="bg-red-700 hover:bg-red-500 text-white font-semibold px-4 py-2 rounded-md transition-colors w-full sm:w-auto"
-          >
+          <button @click="finalizarAula"
+            class="bg-red-700 hover:bg-red-500 text-white font-semibold px-4 py-2 rounded-md transition-colors w-full sm:w-auto">
             Finalizar Aula
           </button>
-
         </div>
       </div>
 
@@ -185,4 +186,3 @@ onMounted(() => loadOfferingData());
     </div>
   </BaseLayout>
 </template>
-

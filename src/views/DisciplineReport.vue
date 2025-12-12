@@ -104,7 +104,6 @@
                 <tr>
                   <th class="border p-2 text-left text-gray-700">Nome</th>
                   <th class="border p-2 text-center text-gray-700">Matrícula</th>
-                  <th class="border p-2 text-center text-gray-700">Curso</th>
                   <th class="border p-2 text-center text-gray-700">Situação Atual</th>
                 </tr>
               </thead>
@@ -116,7 +115,6 @@
                 >
                   <td class="p-2">{{ student.name }}</td>
                   <td class="p-2 text-center font-mono text-sm">{{ student.registration }}</td>
-                  <td class="p-2 text-center text-sm">{{ student.course }}</td>
                   <td
                     class="p-2 text-center font-medium"
                     :class="student.isPresent ? 'text-green-700' : 'text-gray-500'"
