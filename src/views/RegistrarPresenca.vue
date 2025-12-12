@@ -1,13 +1,28 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-100 relative p-4">
+  <div
+    class="min-h-screen flex items-center justify-center bg-gray-100 relative p-4"
+  >
     <Notification />
 
-    <div class="w-full max-w-2xl bg-white rounded-2xl shadow border border-gray-200">
-      <div class="flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between items-start sm:items-center p-5">
+    <div
+      class="w-full max-w-2xl bg-white rounded-2xl shadow border border-gray-200"
+    >
+      <div
+        class="flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between items-start sm:items-center p-5"
+      >
         <div class="flex items-center gap-3">
           <div class="bg-[#1C5E27] text-white p-2.5 rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
               <path d="M8 3H5a2 2 0 0 0-2 2v3" />
               <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
               <path d="M3 16v3a2 2 0 0 0 2 2h3" />
@@ -23,9 +38,19 @@
         </div>
 
         <button
-          class="flex items-center gap-2 text-gray-700 text-xs border border-gray-300 px-3 py-2 rounded-lg hover:bg-gray-50 transition">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          class="flex items-center gap-2 text-gray-700 text-xs border border-gray-300 px-3 py-2 rounded-lg hover:bg-gray-50 transition"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
             <path d="M8 2v4" />
             <path d="M16 2v4" />
             <rect width="18" height="18" x="3" y="4" rx="2" />
@@ -35,14 +60,26 @@
         </button>
       </div>
 
-      <div class="border-t mx-4 mb-5 px-5 py-5 border border-gray-300 rounded-2xl">
+      <div
+        class="border-t mx-4 mb-5 px-5 py-5 border border-gray-300 rounded-2xl"
+      >
         <div class="flex justify-between items-center mb-3">
           <h2 class="font-semibold text-black text-sm">Scanner</h2>
 
           <span
-            class="text-xs text-gray-600 flex items-center gap-1 border border-gray-300 rounded-xl px-3 py-1.5">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            class="text-xs text-gray-600 flex items-center gap-1 border border-gray-300 rounded-xl px-3 py-1.5"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
               <circle cx="10" cy="7" r="1" />
               <circle cx="4" cy="20" r="1" />
               <path d="M4.7 19.3 19 5" />
@@ -55,15 +92,32 @@
           </span>
         </div>
 
-        <div class="border border-gray-300 rounded-2xl flex flex-col items-center justify-center py-6">
+        <div
+          class="border border-gray-300 rounded-2xl flex flex-col items-center justify-center py-6"
+        >
           <div class="p-4 m-2 rounded-2xl border border-gray-200">
-            <img src="../img/biometria.png" alt="Impressão Digital" class="w-32 h-32 md:w-40 md:h-40 mb-4">
+            <img
+              src="../img/biometria.png"
+              alt="Impressão Digital"
+              class="w-32 h-32 md:w-40 md:h-40 mb-4"
+            />
           </div>
 
-          <button @click="capturarDigital"
-            class="bg-[#1C5E27] text-white font-semibold py-2.5 px-5 rounded-lg flex items-center gap-2 hover:bg-[#154b1f] transition-colors text-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <button
+            @click="capturarDigital"
+            class="bg-[#1C5E27] text-white font-semibold py-2.5 px-5 rounded-lg flex items-center gap-2 hover:bg-[#154b1f] transition-colors text-sm"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
               <path d="M8 3H5a2 2 0 0 0-2 2v3" />
               <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
               <path d="M3 16v3a2 2 0 0 0 2 2h3" />
@@ -78,8 +132,11 @@
 
           <p
             v-if="mensagem"
-            :class="['mt-4 text-sm font-medium',
-              mensagemTipo === 'sucesso' ? 'text-green-600' : 'text-red-600']">
+            :class="[
+              'mt-4 text-sm font-medium',
+              mensagemTipo === 'sucesso' ? 'text-green-600' : 'text-red-600',
+            ]"
+          >
             {{ mensagem }}
           </p>
         </div>
@@ -88,9 +145,19 @@
 
     <button
       @click="voltar"
-      class="bg-[#1C5E27] text-white font-semibold py-2.5 px-4 sm:px-5 rounded-lg flex items-center gap-2 hover:bg-[#154b1f] transition-colors text-xs sm:text-sm fixed bottom-4 right-4 sm:bottom-6 sm:right-6 shadow-lg">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      class="bg-[#1C5E27] text-white font-semibold py-2.5 px-4 sm:px-5 rounded-lg flex items-center gap-2 hover:bg-[#154b1f] transition-colors text-xs sm:text-sm fixed bottom-4 right-4 sm:bottom-6 sm:right-6 shadow-lg"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
         <path d="M15 18l-6-6 6-6" />
       </svg>
       Voltar
@@ -100,25 +167,27 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 
-import UserDAO from "../services/UserDAO";
 import BiometricDAO from "../services/BiometricDAO";
 import { useNotification } from "../composables/useNotification";
 import Notification from "../components/Notification.vue";
 
 const router = useRouter();
+const route = useRoute();
 
-const usuarios = ref([]);
+const classSessionId = route.query.classSessionId;
+const role = "STUDENT";
+
 const mensagem = ref("");
 const mensagemTipo = ref("");
+
 const { addNotification } = useNotification();
 
-onMounted(async () => {
-  try {
-    usuarios.value = await UserDAO.getAll();
-  } catch {
-    addNotification("Erro ao carregar usuários.", "error");
+onMounted(() => {
+  if (!classSessionId) {
+    addNotification("Sessão da aula não informada.", "error");
+    router.back();
   }
 });
 
@@ -128,12 +197,19 @@ function voltar() {
 
 async function capturarDigital() {
   try {
-    const role = "STUDENT";
-    await BiometricDAO.insertSample(role);
-    alert("Amostra biométrica capturada com sucesso!");
+    await BiometricDAO.insertSample(role, classSessionId);
+
+    mensagem.value = "Digital capturada com sucesso!";
+    mensagemTipo.value = "sucesso";
+
+    console.log("ClassSession ID:", classSessionId);
+
+    // próximo passo:
+    // POST /api/attendance usando classSessionId
   } catch (error) {
-    console.error("Erro ao capturar a digital:", error);
-    alert("Erro ao capturar a digital.");
+    console.error(error);
+    mensagem.value = "Erro ao capturar a digital.";
+    mensagemTipo.value = "erro";
   }
 }
 </script>
