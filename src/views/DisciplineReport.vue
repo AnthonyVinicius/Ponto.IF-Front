@@ -160,19 +160,23 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
+
 import BaseLayout from "../components/BaseLayout.vue";
 import FrequencyChart from "../components/FrequencyChart.vue";
+
 import ClassSessionDAO from "../services/ClassSessionDAO";
 import EnrollmentDAO from "../services/EnrollmentDAO";
 import StudentDAO from "../services/StudentDAO";
 import SubjectDAO from "../services/SubjectDAO";
 import OfferingDAO from "../services/SubjectOfferingDAO";
-import CourseDAO from "../services/CourseDAO"; 
-import TeacherDAO from "../services/TeacherDAO"; 
+import CourseDAO from "../services/CourseDAO";
+import TeacherDAO from "../services/TeacherDAO";
 
 const router = useRouter();
 const route = useRoute();
+
 const loadingStudents = ref(true);
+const teacherId = localStorage.getItem("user-id");
 
 const disciplineInfo = ref({
   name: "",
@@ -192,11 +196,15 @@ async function loadDisciplineInfo() {
     const offeringId = route.params.offeringId;
 
     const offering = await OfferingDAO.getById(offeringId);
-    
+
     const [subject, course, teacher, enrollments] = await Promise.all([
       SubjectDAO.getById(offering.subjectId),
-      offering.courseId ? CourseDAO.getById(offering.courseId) : Promise.resolve({ name: "Curso não encontrado" }),
-      offering.teacherId ? TeacherDAO.getById(offering.teacherId) : Promise.resolve({ name: "Professor não encontrado" }),
+      offering.courseId
+        ? CourseDAO.getById(offering.courseId)
+        : Promise.resolve({ name: "Curso não encontrado" }),
+      offering.teacherId
+        ? TeacherDAO.getById(offering.teacherId)
+        : Promise.resolve({ name: "Professor não encontrado" }),
       EnrollmentDAO.getStudentsByOffering(offeringId)
     ]);
 
@@ -211,8 +219,7 @@ async function loadDisciplineInfo() {
             course: s.course?.name ?? "Sem curso",
             isPresent: false
           };
-        } catch (err) {
-          console.error(`Erro ao carregar aluno ${e.studentId}`, err);
+        } catch {
           return null;
         }
       })
@@ -222,14 +229,13 @@ async function loadDisciplineInfo() {
       name: subject.name,
       term: offering.term,
       schedule: offering.schedule,
-      course: course,
-      teacher: teacher,
+      course,
+      teacher,
       presences: 0,
       absences: 0,
       frequency: 0,
-      students: students.filter(s => s !== null)
+      students: students.filter(Boolean)
     };
-
   } catch (error) {
     console.error("Erro ao carregar disciplina:", error);
     alert("Erro ao carregar dados da disciplina.");
@@ -242,13 +248,15 @@ async function comecarAula() {
   try {
     const offeringId = route.params.offeringId;
 
-    ClassSessionDAO.startSession(offeringId)
+    await SubjectDAO.startOffering(offeringId, teacherId);
+
+    const classSession = await ClassSessionDAO.getByOffering(offeringId);
 
     alert("Aula iniciada com sucesso!");
 
     router.push({
       name: "Dashboard",
-      params: { offeringId }
+      params: { classSessionId: classSession.id }
     });
 
   } catch (error) {
@@ -264,3 +272,4 @@ function voltarPagina() {
 
 onMounted(loadDisciplineInfo);
 </script>
+
