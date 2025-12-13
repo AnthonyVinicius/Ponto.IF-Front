@@ -175,7 +175,6 @@ onMounted(async () => {
 </script>
 
 <template>
-  <BaseLayout>
     <div class="bg-white rounded-lg p-6 shadow-sm font-roboto">
       <div class="topbar flex flex-wrap items-center justify-between gap-6">
 
@@ -243,5 +242,4 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-  </BaseLayout>
 </template>
