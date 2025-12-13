@@ -14,6 +14,7 @@ import SubjectDAO from "../services/SubjectDAO";
 import EnrollmentDAO from "../services/EnrollmentDAO";
 import StudentDAO from "../services/StudentDAO";
 import ClassSessionDAO from "../services/ClassSessionDAO";
+import AttendanceDAO from "../services/AttendanceDAO";
 
 const route = useRoute();
 const router = useRouter();
@@ -46,14 +47,14 @@ function registrarPresenca() {
     path: "/registrar-presenca",
     query: {
       classSessionId: Number(classSession.value.id),
-    },
+      offeringId: Number(offeringId)
+    }
   });
 }
 
 async function loadClassSession() {
   try {
     classSession.value = await ClassSessionDAO.getByOffering(offeringId);
-    console.log(classSession.value);
   } catch (err) {
     console.error(err);
     errorMessage.value = "Erro ao carregar sessão da aula.";
@@ -65,7 +66,7 @@ async function loadOfferingData() {
     isLoading.value = true;
 
     const offerings = await TeacherDAO.getOfferings(teacherId);
-    const offer = offerings.find((o) => o.id == offeringId);
+    const offer = offerings.find(o => o.id == offeringId);
 
     if (!offer) {
       errorMessage.value = "Disciplina não encontrada.";
@@ -78,7 +79,7 @@ async function loadOfferingData() {
     const enrollments = await EnrollmentDAO.getStudentsByOffering(offer.id);
 
     const list = await Promise.all(
-      enrollments.map(async (e) => {
+      enrollments.map(async e => {
         const st = await StudentDAO.getById(e.studentId);
 
         return {
@@ -90,17 +91,42 @@ async function loadOfferingData() {
           hour: "--:--",
           date: "--/--/----",
           presencas: 0,
-          ausencias: 0,
+          ausencias: 0
         };
       })
     );
 
     students.value = list;
+
   } catch (err) {
     console.error(err);
     errorMessage.value = "Erro ao carregar dados da disciplina.";
   } finally {
     isLoading.value = false;
+  }
+}
+
+async function loadAttendances() {
+  try {
+    const attendances = await AttendanceDAO.getByOffering(offeringId);
+
+    const attendanceMap = new Map();
+    attendances.forEach(a => {
+      attendanceMap.set(a.studentId, a.status);
+    });
+
+    students.value = students.value.map(student => ({
+      ...student,
+      status:
+        attendanceMap.get(student.id) === "PRESENT"
+          ? "Presente"
+          : attendanceMap.get(student.id) === "ABSENT"
+            ? "Falta"
+            : "Atraso"
+    }));
+
+  } catch (err) {
+    console.error("Erro ao carregar presenças:", err);
   }
 }
 
@@ -119,13 +145,13 @@ const filteredStudents = computed(() => {
   let list = [...students.value];
 
   if (searchQuery.value) {
-    list = list.filter((s) =>
+    list = list.filter(s =>
       s.name?.toLowerCase().includes(searchQuery.value.toLowerCase())
     );
   }
 
   if (status.value !== "All") {
-    list = list.filter((s) => s.status === status.value);
+    list = list.filter(s => s.status === status.value);
   }
 
   return list;
@@ -136,14 +162,15 @@ const totalStudents = computed(() => filteredStudents.value.length);
 const frequenciaPercent = computed(() => {
   if (students.value.length === 0) return 0;
   const presentes = students.value.filter(
-    (s) => s.status === "Presente"
+    s => s.status === "Presente"
   ).length;
   return Math.round((presentes / students.value.length) * 100);
 });
 
-onMounted(() => {
-  loadClassSession();
-  loadOfferingData();
+onMounted(async () => {
+  await loadClassSession();
+  await loadOfferingData();
+  await loadAttendances();
 });
 </script>
 
@@ -151,11 +178,9 @@ onMounted(() => {
   <BaseLayout>
     <div class="bg-white rounded-lg p-6 shadow-sm font-roboto">
       <div class="topbar flex flex-wrap items-center justify-between gap-6">
+
         <div class="my-6 max-w-md w-full flex justify-center sm:justify-start">
-          <FrequencyChart
-            :percentage="frequenciaPercent"
-            class="border border-gray-200 w-full max-w-[260px]"
-          />
+          <FrequencyChart :percentage="frequenciaPercent" class="border border-gray-200 w-full max-w-[260px]" />
         </div>
 
         <div class="title w-full sm:w-auto">
@@ -164,8 +189,7 @@ onMounted(() => {
 
           <div class="mt-2">
             <span
-              class="inline-flex items-center gap-x-1.5 rounded-full bg-[#1C5E27] px-3 py-1 text-xs font-medium text-white"
-            >
+              class="inline-flex items-center gap-x-1.5 rounded-full bg-[#1C5E27] px-3 py-1 text-xs font-medium text-white">
               <Circle class="h-2 w-2 fill-green-300" />
               {{ disciplinaAtual }}
             </span>
@@ -173,18 +197,13 @@ onMounted(() => {
         </div>
 
         <div class="flex flex-wrap w-full sm:w-auto items-center gap-3">
+
           <div class="relative w-full sm:w-auto">
-            <div
-              class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
-            >
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <Search class="h-5 w-5 text-gray-400" />
             </div>
-            <input
-              v-model="searchQuery"
-              type="text"
-              placeholder="Pesquisar por aluno"
-              class="rounded-md border border-gray-200 py-2 pl-10 pr-4 text-sm shadow-sm w-full sm:w-auto"
-            />
+            <input v-model="searchQuery" type="text" placeholder="Pesquisar por aluno"
+              class="rounded-md border border-gray-200 py-2 pl-10 pr-4 text-sm shadow-sm w-full sm:w-auto" />
           </div>
 
           <Filters v-model="status" :options="statusOptions">
@@ -194,19 +213,16 @@ onMounted(() => {
             Status: {{ status }}
           </Filters>
 
-          <button
-            @click="registrarPresenca"
-            class="bg-[#1C5E27] hover:bg-[#174a20] text-white font-semibold px-4 py-2 rounded-md transition-colors w-full sm:w-auto"
-          >
+          <button @click="registrarPresenca"
+            class="bg-[#1C5E27] hover:bg-[#174a20] text-white font-semibold px-4 py-2 rounded-md transition-colors w-full sm:w-auto">
             Registrar Presença
           </button>
 
-          <button
-            @click="finalizarAula"
-            class="bg-red-700 hover:bg-red-500 text-white font-semibold px-4 py-2 rounded-md transition-colors w-full sm:w-auto"
-          >
+          <button @click="finalizarAula"
+            class="bg-red-700 hover:bg-red-500 text-white font-semibold px-4 py-2 rounded-md transition-colors w-full sm:w-auto">
             Finalizar Aula
           </button>
+
         </div>
       </div>
 

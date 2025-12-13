@@ -168,7 +168,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
-
+import AttendanceDAO from "../services/AttendanceDAO";
 import BiometricDAO from "../services/BiometricDAO";
 import { useNotification } from "../composables/useNotification";
 import Notification from "../components/Notification.vue";
@@ -197,19 +197,29 @@ function voltar() {
 
 async function capturarDigital() {
   try {
-    await BiometricDAO.insertSample(role, classSessionId);
+    const result = await BiometricDAO.insertSample(role, classSessionId);
 
-    mensagem.value = "Digital capturada com sucesso!";
+    const studentId = result.studentId;
+    const offeringId = Number(route.query.offeringId);
+    
+    const payload = {
+      sessionId: classSessionId,
+      studentId: studentId,
+      status: "PRESENT",
+      offeringId: offeringId
+    };
+
+    await AttendanceDAO.insert(payload);
+
+    mensagem.value = "Presença registrada com sucesso!";
     mensagemTipo.value = "sucesso";
 
-    console.log("ClassSession ID:", classSessionId);
-
-    // próximo passo:
-    // POST /api/attendance usando classSessionId
   } catch (error) {
     console.error(error);
-    mensagem.value = "Erro ao capturar a digital.";
+    mensagem.value = "Erro ao registrar presença.";
     mensagemTipo.value = "erro";
   }
 }
+
+
 </script>
