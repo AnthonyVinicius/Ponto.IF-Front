@@ -19,7 +19,7 @@ import AttendanceDAO from "../services/AttendanceDAO";
 const route = useRoute();
 const router = useRouter();
 
-const offeringId = route.params.offeringId;
+const offeringId = Number(route.params.offeringId);
 const teacherId = localStorage.getItem("user-id");
 
 const disciplinaAtual = ref("Carregando...");
@@ -47,7 +47,7 @@ function registrarPresenca() {
     path: "/registrar-presenca",
     query: {
       classSessionId: Number(classSession.value.id),
-      offeringId: Number(offeringId)
+      offeringId
     }
   });
 }
@@ -66,7 +66,7 @@ async function loadOfferingData() {
     isLoading.value = true;
 
     const offerings = await TeacherDAO.getOfferings(teacherId);
-    const offer = offerings.find(o => o.id == offeringId);
+    const offer = offerings.find(o => o.id === offeringId);
 
     if (!offer) {
       errorMessage.value = "Disciplina não encontrada.";
@@ -109,21 +109,43 @@ async function loadOfferingData() {
 async function loadAttendances() {
   try {
     const attendances = await AttendanceDAO.getByOffering(offeringId);
+    if (!attendances || attendances.length === 0) return;
 
     const attendanceMap = new Map();
+
     attendances.forEach(a => {
-      attendanceMap.set(a.studentId, a.status);
+      const dateObj = new Date(a.recordedAt);
+
+      const date = dateObj.toLocaleDateString("pt-BR");
+      const hour = dateObj.toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+
+      attendanceMap.set(a.studentId, {
+        status: a.status,
+        date,
+        hour
+      });
     });
 
-    students.value = students.value.map(student => ({
-      ...student,
-      status:
-        attendanceMap.get(student.id) === "PRESENT"
-          ? "Presente"
-          : attendanceMap.get(student.id) === "ABSENT"
-            ? "Falta"
-            : "Atraso"
-    }));
+    students.value = students.value.map(student => {
+      const attendance = attendanceMap.get(student.id);
+
+      if (!attendance) return student;
+
+      return {
+        ...student,
+        status:
+          attendance.status === "PRESENT"
+            ? "Presente"
+            : attendance.status === "ABSENT"
+              ? "Falta"
+              : "Atraso",
+        date: attendance.date,
+        hour: attendance.hour
+      };
+    });
 
   } catch (err) {
     console.error("Erro ao carregar presenças:", err);
@@ -174,12 +196,17 @@ onMounted(async () => {
 });
 </script>
 
+
 <template>
+  <BaseLayout>
     <div class="bg-white rounded-lg p-6 shadow-sm font-roboto">
       <div class="topbar flex flex-wrap items-center justify-between gap-6">
 
         <div class="my-6 max-w-md w-full flex justify-center sm:justify-start">
-          <FrequencyChart :percentage="frequenciaPercent" class="border border-gray-200 w-full max-w-[260px]" />
+          <FrequencyChart
+            :percentage="frequenciaPercent"
+            class="border border-gray-200 w-full max-w-[260px]"
+          />
         </div>
 
         <div class="title w-full sm:w-auto">
@@ -188,7 +215,8 @@ onMounted(async () => {
 
           <div class="mt-2">
             <span
-              class="inline-flex items-center gap-x-1.5 rounded-full bg-[#1C5E27] px-3 py-1 text-xs font-medium text-white">
+              class="inline-flex items-center gap-x-1.5 rounded-full bg-[#1C5E27] px-3 py-1 text-xs font-medium text-white"
+            >
               <Circle class="h-2 w-2 fill-green-300" />
               {{ disciplinaAtual }}
             </span>
@@ -201,8 +229,12 @@ onMounted(async () => {
             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <Search class="h-5 w-5 text-gray-400" />
             </div>
-            <input v-model="searchQuery" type="text" placeholder="Pesquisar por aluno"
-              class="rounded-md border border-gray-200 py-2 pl-10 pr-4 text-sm shadow-sm w-full sm:w-auto" />
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Pesquisar por aluno"
+              class="rounded-md border border-gray-200 py-2 pl-10 pr-4 text-sm shadow-sm w-full sm:w-auto"
+            />
           </div>
 
           <Filters v-model="status" :options="statusOptions">
@@ -212,13 +244,17 @@ onMounted(async () => {
             Status: {{ status }}
           </Filters>
 
-          <button @click="registrarPresenca"
-            class="bg-[#1C5E27] hover:bg-[#174a20] text-white font-semibold px-4 py-2 rounded-md transition-colors w-full sm:w-auto">
+          <button
+            @click="registrarPresenca"
+            class="bg-[#1C5E27] hover:bg-[#174a20] text-white font-semibold px-4 py-2 rounded-md transition-colors w-full sm:w-auto"
+          >
             Registrar Presença
           </button>
 
-          <button @click="finalizarAula"
-            class="bg-red-700 hover:bg-red-500 text-white font-semibold px-4 py-2 rounded-md transition-colors w-full sm:w-auto">
+          <button
+            @click="finalizarAula"
+            class="bg-red-700 hover:bg-red-500 text-white font-semibold px-4 py-2 rounded-md transition-colors w-full sm:w-auto"
+          >
             Finalizar Aula
           </button>
 
@@ -242,4 +278,5 @@ onMounted(async () => {
         </div>
       </div>
     </div>
+  </BaseLayout>
 </template>
