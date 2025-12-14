@@ -1,8 +1,11 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
+
 import AttendanceDAO from "../services/AttendanceDAO";
 import BiometricDAO from "../services/BiometricDAO";
+import StudentDAO from "../services/StudentDAO";
+
 import { useNotification } from "../composables/useNotification";
 import Notification from "../components/Notification.vue";
 
@@ -13,107 +16,123 @@ const classSessionId = route.query.classSessionId;
 const offeringId = Number(route.query.offeringId);
 const role = "STUDENT";
 
+const lendoBiometria = ref(false);
+const leituraAtiva = ref(true);
+const cooldown = ref(false);
+
 const mensagem = ref("");
 const mensagemTipo = ref("");
-const lendoBiometria = ref(false);
 
 const { addNotification } = useNotification();
+
+let intervalId = null;
+
+async function lerBiometriaContinuamente() {
+  if (lendoBiometria.value || cooldown.value || !leituraAtiva.value) return;
+
+  try {
+    lendoBiometria.value = true;
+
+    const biometricResult = await BiometricDAO.insertSample(
+      role,
+      classSessionId
+    );
+
+    if (!biometricResult?.studentId) return;
+
+    const student = await StudentDAO.getById(biometricResult.studentId);
+
+    const payload = {
+      sessionId: classSessionId,
+      studentId: biometricResult.studentId,
+      status: "PRESENT",
+      offeringId
+    };
+
+    await AttendanceDAO.insert(payload);
+
+    mensagem.value = `Presença de "${student.name}" registrada`;
+    mensagemTipo.value = "sucesso";
+
+    cooldown.value = true;
+    setTimeout(() => {
+      cooldown.value = false;
+      mensagem.value = "";
+    }, 3500);
+
+  } catch (error) {
+  } finally {
+    lendoBiometria.value = false;
+  }
+}
 
 onMounted(() => {
   if (!classSessionId) {
     addNotification("Sessão da aula não informada.", "error");
     router.back();
+    return;
   }
+
+  intervalId = setInterval(lerBiometriaContinuamente, 1500);
+});
+
+onUnmounted(() => {
+  leituraAtiva.value = false;
+  if (intervalId) clearInterval(intervalId);
 });
 
 function voltar() {
   router.back();
 }
-
-async function capturarDigital() {
-  if (lendoBiometria.value) return;
-
-  try {
-    lendoBiometria.value = true;
-    mensagem.value = "";
-    mensagemTipo.value = "";
-
-    const result = await BiometricDAO.insertSample(role, classSessionId);
-
-    const payload = {
-      sessionId: classSessionId,
-      studentId: result.studentId,
-      status: "PRESENT",
-      offeringId,
-    };
-
-    await AttendanceDAO.insert(payload);
-
-    mensagem.value = "Presença registrada com sucesso!";
-    mensagemTipo.value = "sucesso";
-  } catch (error) {
-    console.error(error);
-    mensagem.value = "Erro ao registrar presença.";
-    mensagemTipo.value = "erro";
-  } finally {
-    lendoBiometria.value = false;
-  }
-}
 </script>
 
 <template>
-  <div
-    class="min-h-screen flex items-center justify-center bg-gray-100 relative p-4"
-  >
+  <div class="min-h-screen flex items-center justify-center bg-gray-100 relative p-4">
     <Notification />
 
-    <div
-      class="w-full max-w-2xl bg-white rounded-2xl shadow border border-gray-200"
-    >
-      <div
-        class="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center p-5"
-      >
-        <div class="flex items-center gap-3">
-          <div class="bg-[#1C5E27] text-white p-2.5 rounded-lg">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M8 3H5a2 2 0 0 0-2 2v3" />
-              <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
-              <path d="M3 16v3a2 2 0 0 0 2 2h3" />
-              <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
-            </svg>
-          </div>
-          <div>
-            <h1 class="text-base font-bold text-gray-800">Leitor Biométrico</h1>
-            <p class="text-gray-500 text-sm">
-              Capture a presença por impressão digital
-            </p>
-          </div>
+    <div class="w-full max-w-2xl bg-white rounded-2xl shadow border border-gray-200">
+      <div class="flex items-center gap-4 p-5">
+        <div class="bg-[#1C5E27] text-white p-2.5 rounded-lg">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+            <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+            <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+            <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+          </svg>
+        </div>
+
+        <div>
+          <h1 class="text-lg font-bold text-gray-800">
+            Leitor Biométrico
+          </h1>
+          <p class="text-sm text-gray-500">
+            Aguardando leitura da impressão digital
+          </p>
         </div>
       </div>
 
-      <div
-        class="border-t mx-4 mb-5 px-5 py-5 border border-gray-300 rounded-2xl"
-      >
-        <div
-          class="border border-gray-300 rounded-2xl flex flex-col items-center justify-center py-6"
-        >
-          <div class="p-4 m-2 rounded-2xl border border-gray-200 relative">
-            <img src="../img/biometria.png" class="w-32 h-32 md:w-40 md:h-40" />
+      <div class="border-t p-6">
+        <div class="flex flex-col items-center gap-4">
+          <div class="relative p-4 rounded-2xl border border-gray-200">
+            <img
+              src="../img/biometria.png"
+              class="w-36 h-36 md:w-44 md:h-44"
+            />
 
             <div
               v-if="lendoBiometria"
               class="absolute inset-0 bg-white/80 flex flex-col items-center justify-center rounded-2xl"
             >
               <svg
-                class="animate-spin h-8 w-8 text-[#1C5E27] mb-3"
+                class="animate-spin h-8 w-8 text-[#1C5E27] mb-2"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -132,32 +151,31 @@ async function capturarDigital() {
                   d="M4 12a8 8 0 018-8v8z"
                 />
               </svg>
+
               <span class="text-sm font-semibold text-gray-700">
-                Biometria sendo lida...
+                Lendo digital...
               </span>
             </div>
           </div>
 
-          <button
-            @click="capturarDigital"
-            :disabled="lendoBiometria"
-            class="bg-[#1C5E27] disabled:bg-gray-400 text-white font-semibold py-2.5 px-5 rounded-lg flex items-center gap-2 transition-colors text-sm"
-          >
-            Capturar digital do usuário
-          </button>
-
-          <p class="mt-3 text-xs text-gray-500">
-            Posicione o dedo firmemente no sensor
+          <p class="text-sm font-medium text-gray-700">
+            {{ lendoBiometria ? "Lendo digital..." : "Aguardando digital" }}
           </p>
 
           <p
             v-if="mensagem"
             :class="[
-              'mt-4 text-sm font-medium',
-              mensagemTipo === 'sucesso' ? 'text-green-600' : 'text-red-600',
+              'mt-3 text-sm font-semibold',
+              mensagemTipo === 'sucesso'
+                ? 'text-green-600'
+                : 'text-red-600'
             ]"
           >
             {{ mensagem }}
+          </p>
+
+          <p class="text-xs text-gray-500 mt-1">
+            Posicione o dedo firmemente no sensor
           </p>
         </div>
       </div>

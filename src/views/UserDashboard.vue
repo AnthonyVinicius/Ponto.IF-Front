@@ -30,11 +30,43 @@
 
           <div class="mt-2 sm:mt-0 sm:ms-auto w-full sm:w-auto">
             <button
-              @click="biometricRegister()"
-              class="bg-[#1C5E27] hover:bg-[#174a20] text-white font-semibold px-4 py-2 rounded-md transition-colors w-full sm:w-auto"
+              @click="biometricRegister"
+              :disabled="cadastrandoBiometria"
+              class="bg-[#1C5E27] disabled:bg-gray-400 hover:bg-[#174a20] text-white font-semibold px-4 py-2 rounded-md transition-colors w-full sm:w-auto flex items-center justify-center gap-2"
             >
-              Registrar Biometria
+              <svg
+                v-if="cadastrandoBiometria"
+                class="animate-spin h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                />
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8z"
+                />
+              </svg>
+
+              <span>
+                {{ cadastrandoBiometria ? "Aguardando leitura..." : "Registrar Biometria" }}
+              </span>
             </button>
+
+            <p
+              v-if="cadastrandoBiometria"
+              class="mt-2 text-sm text-gray-500 text-center sm:text-left"
+            >
+              Posicione o dedo no leitor biométrico
+            </p>
           </div>
         </div>
 
@@ -162,6 +194,7 @@ const aluno = ref({
 const isLoading = ref(true);
 const error = ref(null);
 const frequenciaPercent = ref(0);
+const cadastrandoBiometria = ref(false);
 
 const subjects = ref({});
 const offerings = ref([]);
@@ -224,11 +257,14 @@ async function loadStudentsInfo(studentId) {
 
 async function biometricRegister() {
   try {
+    cadastrandoBiometria.value = true;
     const userId = aluno.value.id;
-    const res = await BiometricDAO.insertBiometric(userId);
+    await BiometricDAO.insertBiometric(userId);
     alert("Biometria registrada com sucesso!");
   } catch (error) {
     alert("Falha ao registrar biometria.");
+  } finally {
+    cadastrandoBiometria.value = false;
   }
 }
 
