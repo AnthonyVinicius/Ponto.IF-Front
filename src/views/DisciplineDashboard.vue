@@ -108,7 +108,7 @@ async function loadOfferingData() {
 
 async function loadAttendances() {
   try {
-    const attendances = await AttendanceDAO.getByOffering(offeringId);
+    const attendances = AttendanceDAO.getBySession(classSession.value.id)
     if (!attendances || attendances.length === 0) return;
 
     const attendanceMap = new Map();

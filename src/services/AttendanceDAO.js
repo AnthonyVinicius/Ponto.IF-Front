@@ -10,6 +10,11 @@ class AttendanceDAO extends GenericDAO {
     const res = await this.api.get(`${this.baseURL}/offering/${offeringId}`);
     return res.data;
   }
+
+  async getBySession(sessionId) {
+    const res = await this.api.get(`${this.baseURL}/session/${sessionId}`);
+    return res.data;
+  }
 }
 
 export default new AttendanceDAO();
