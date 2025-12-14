@@ -7,147 +7,124 @@
   >
     <div :class="['flex items-center gap-x-3', isExpanded ? '' : 'justify-center']">
       <div class="bg-[#1C5E27] text-white p-2 rounded-lg">
-        <Fingerprint class="w-6 h-6" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-fingerprint-icon lucide-fingerprint"
+        >
+          <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4" />
+          <path d="M14 13.12c0 2.38 0 6.38-1 8.88" />
+          <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02" />
+          <path d="M2 12a10 10 0 0 1 18-6" />
+          <path d="M2 16h.01" />
+          <path d="M21.8 16c.2-2 .131-5.354 0-6" />
+          <path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2" />
+          <path d="M8.65 22c.21-.66.45-1.32.57-2" />
+          <path d="M9 6.8a6 6 0 0 1 9 5.2v2" />
+        </svg>
       </div>
-
       <span
         v-show="isExpanded"
-        class="text-sm font-bold text-gray-800 whitespace-nowrap"
+        class="text-xm font-bold text-gray-800 transition-opacity duration-200 whitespace-nowrap"
       >
         Admin de Presenças
       </span>
     </div>
 
     <div class="mt-10 flex flex-1 flex-col justify-between">
-      <nav :class="['space-y-2', isExpanded ? '' : 'flex flex-col items-center']">
-        <div
+
+      <nav :class="['-mx-3 space-y-3', isExpanded ? '' : 'flex flex-col items-center']">
+        <router-link
           v-for="item in menuItems"
           :key="item.label"
-          @click="handleMenuClick(item)"
+          :to="item.to"
           :title="!isExpanded ? item.label : ''"
-          class="flex cursor-pointer items-center rounded-lg px-3 py-3 text-gray-600
-                 transition-colors duration-300 hover:bg-[#1C5E27] hover:text-white"
-          :class="[isExpanded ? '' : 'justify-center']"
+          :class="[
+            'flex transform items-center rounded-lg px-3 py-3 text-gray-600 transition-colors duration-300 hover:bg-[#1C5E27] hover:text-white',
+            isExpanded ? '' : 'justify-center'
+          ]"
         >
           <component :is="item.icon" class="h-6 w-6" />
-
           <span
             v-show="isExpanded"
-            class="mx-4 text-sm font-medium whitespace-nowrap"
+            class="mx-4 text-base font-medium whitespace-nowrap"
           >
             {{ item.label }}
           </span>
-
-          <span
-            v-if="item.action === 'activeClass' && hasActiveClass && isExpanded"
-            class="ml-auto text-xs bg-green-600 text-white px-2 py-0.5 rounded-full"
-          >
-            ativa
-          </span>
-        </div>
+        </router-link>
       </nav>
 
       <div class="mt-6 border-t pt-4">
+
         <button
           @click="logout"
           :title="!isExpanded ? 'Sair' : ''"
-          class="flex w-full items-center rounded-lg px-3 py-3 text-gray-600
-                 hover:bg-red-600 hover:text-white transition-colors"
+          class="flex w-full items-center rounded-lg px-3 py-3 text-gray-600 hover:bg-red-600 hover:text-white transition-colors"
           :class="[isExpanded ? '' : 'justify-center']"
         >
           <LogOut class="h-6 w-6" />
-          <span v-show="isExpanded" class="mx-4 text-sm font-medium">
+          <span
+            v-show="isExpanded"
+            class="mx-4 text-base font-medium whitespace-nowrap"
+          >
             Sair
           </span>
         </button>
 
-        <div v-show="isExpanded" class="mt-4 border-t pt-4">
-          <p class="text-sm font-semibold text-gray-700">
+        <div v-show="isExpanded" class="flex flex-col gap-3 mt-4 border-t pt-4">
+          <h1 class="text-base font-semibold text-gray-700 whitespace-nowrap">
             {{ usuarioNome }}
-          </p>
+          </h1>
         </div>
+
       </div>
+
     </div>
   </aside>
 </template>
 
 <script setup>
-import { shallowRef, computed } from "vue";
-import { useRouter } from "vue-router";
-import { BookCheck, PlayCircle, LogOut, Fingerprint } from "lucide-vue-next";
+import { shallowRef, computed } from 'vue'
+import { BookCheck, LogOut } from 'lucide-vue-next'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '../stores/user'
 
-import { useUserStore } from "../stores/user";
-import ClassSessionDAO from "../services/ClassSessionDAO";
+const router = useRouter()
+const userStore = useUserStore()
 
 defineProps({
-  isExpanded: { type: Boolean, required: true },
-});
-
-const router = useRouter();
-const userStore = useUserStore();
+  isExpanded: { type: Boolean, required: true }
+})
 
 const menuItems = shallowRef([
-  {
-    label: "Gerenciar Disciplinas",
-    icon: BookCheck,
-    to: "/disciplinas",
-  },
-  {
-    label: "Aula Ativa",
-    icon: PlayCircle,
-    action: "activeClass",
-  },
-]);
+  { to: '/disciplinas', label: 'Gerenciar Disciplinas', icon: BookCheck }
+])
 
-const usuarioNome = computed(() => userStore.name ?? "Usuário");
-
-const hasActiveClass = computed(() => !!userStore.activeOfferingId);
-
-
-async function handleMenuClick(item) {
-  if (item.action === "activeClass") {
-    const offeringId = userStore.activeOfferingId;
-
-    if (!offeringId) {
-      alert("Nenhuma aula ativa no momento.");
-      return;
-    }
-
-    try {
-      const session = await ClassSessionDAO.getByOffering(offeringId);
-
-      if (!session || !session.active) {
-        alert("A aula foi finalizada.");
-        userStore.clearActiveOffering();
-        return;
-      }
-
-      router.push({
-        name: "Dashboard",
-        params: { offeringId },
-      });
-    } catch (err) {
-      console.error(err);
-      alert("Erro ao verificar a aula ativa.");
-    }
-
-    return;
-  }
-
-  if (item.to) {
-    router.push(item.to);
-  }
-}
+const usuarioNome = computed(() => userStore.name ?? "Usuário")
 
 function logout() {
-  userStore.logout();
-  router.push("/login");
+  userStore.logout()
+  router.push('/login')
 }
 </script>
 
 <style scoped>
 .router-link-exact-active {
   background-color: #1c5e27;
+  color: white;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1),
+    0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.router-link-exact-active:hover {
+  background-color: #154b1f;
   color: white;
 }
 </style>

@@ -1,22 +1,28 @@
 <script setup>
 import { onMounted, ref, computed } from "vue";
-import BaseLayout from "../components/BaseLayout.vue";
 import { useRouter } from "vue-router";
 import { Search, Download } from "lucide-vue-next";
+
+import BaseLayout from "../components/BaseLayout.vue";
 
 import TeacherDAO from "../services/TeacherDAO";
 import SubjectDAO from "../services/SubjectDAO";
 import ClassroomDAO from "../services/ClassroomDAO";
 import EnrollmentDAO from "../services/EnrollmentDAO";
 import StudentDAO from "../services/StudentDAO";
+import ClassSessionDAO from "../services/ClassSessionDAO";
 
 const router = useRouter();
 
 const offerings = ref([]);
 const searchQuery = ref("");
+const activeOfferings = ref([]);
 
 const teacherId = localStorage.getItem("user-id");
 
+/* ==============================
+   CARREGAR DISCIPLINAS
+================================ */
 async function loadOfferings() {
   try {
     const data = await TeacherDAO.getOfferings(teacherId);
@@ -40,7 +46,6 @@ async function loadOfferings() {
         const students = await Promise.all(
           enrollments.map(async (e) => {
             const student = await StudentDAO.getById(e.studentId);
-
             return {
               id: student.id,
               nome: student.name,
@@ -70,23 +75,56 @@ async function loadOfferings() {
   }
 }
 
+/* ==============================
+   CARREGAR AULAS ATIVAS
+================================ */
+async function loadActiveSessions() {
+  try {
+    const sessions = await ClassSessionDAO.getAllActive();
+
+    activeOfferings.value = sessions
+      .filter((session) => session.sessionEnd === null)
+      .map((session) => session.offeringId);
+  } catch (err) {
+    console.error("Erro ao carregar aulas ativas:", err);
+  }
+}
+
+/* ==============================
+   HELPERS
+================================ */
+function isActiveSession(offeringId) {
+  return activeOfferings.value.includes(offeringId);
+}
+
+function goToDashboard(offeringId) {
+  router.push(`/dashboard/${offeringId}`);
+}
+
 function goToDisciplineReport(offeringId) {
   router.push(`/disciplinas/${offeringId}/gerenciar`);
 }
 
+/* ==============================
+   FILTRO
+================================ */
 const filteredOfferings = computed(() =>
   offerings.value.filter((o) =>
     o.subjectName.toLowerCase().includes(searchQuery.value.toLowerCase())
   )
 );
 
-onMounted(loadOfferings);
+onMounted(async () => {
+  await loadOfferings();
+  await loadActiveSessions();
+});
 </script>
+
 <template>
   <BaseLayout>
     <div class="bg-white p-4">
       <div class="topbar flex flex-wrap items-center justify-between gap-4 m-3">
-        <div class="w-full sm:w-auto">
+        <div>
           <h1 class="text-lg font-semibold text-gray-800">
             Gerenciamento de Disciplinas
           </h1>
@@ -95,26 +133,24 @@ onMounted(loadOfferings);
           </p>
         </div>
 
-        <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-          <div class="relative flex-1 sm:flex-none min-w-[200px]">
-            <div
-              class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
-            >
-              <Search class="h-5 w-5 text-gray-400" />
-            </div>
+        <div class="flex gap-3 items-center">
+          <div class="relative min-w-[200px]">
+            <Search
+              class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
+            />
             <input
               v-model="searchQuery"
               type="text"
               placeholder="Pesquisar disciplina"
-              class="rounded-md border border-gray-200 bg-white py-2 pl-10 pr-4 text-sm text-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 w-full"
+              class="rounded-md border border-gray-200 py-2 pl-10 pr-4 text-sm shadow-sm w-full"
             />
           </div>
 
           <button
-            class="bg-[#1C5E27] hover:bg-[#174a20] text-white font-semibold px-4 py-2 rounded-md transition-colors flex items-center gap-2"
+            class="bg-[#1C5E27] hover:bg-[#174a20] text-white font-semibold px-4 py-2 rounded-md flex items-center gap-2"
           >
-            <Download class="h-5 w-5 mr-2" />
-            <span>Exportar CSV</span>
+            <Download class="h-5 w-5" />
+            Exportar CSV
           </button>
         </div>
       </div>
@@ -129,52 +165,80 @@ onMounted(loadOfferings);
       <div
         v-for="offer in filteredOfferings"
         :key="offer.id"
-        class="border border-gray-200 p-4 rounded-md m-3 cursor-pointer hover:bg-gray-50 transition"
+        class="border border-gray-200 p-4 rounded-md m-3 hover:bg-gray-50 transition"
       >
-        <div class="flex gap-2 items-center mb-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="inline ml-1 h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-
+        <div class="flex items-center gap-2 mb-2">
           <h2
-            class="text-base font-semibold text-[#1C5E27] hover:text-green-800 transition"
+            class="text-base font-semibold text-[#1C5E27] underline hover:text-green-800 cursor-pointer"
             @click="goToDisciplineReport(offer.id)"
           >
             {{ offer.subjectName }}
           </h2>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-chevron-right-icon lucide-chevron-right"
+          >
+            <path d="m9 18 6-6-6-6" />
+          </svg>
+          <button
+            v-if="isActiveSession(offer.id)"
+            @click.stop="goToDashboard(offer.id)"
+            class="bg-[#1C5E27] hover:bg-[#174a20] text-white font-semibold px-2 py-1 rounded-md flex items-center ms-auto"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-circle-play-icon lucide-circle-play"
+            >
+              <path
+                d="M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z"
+              />
+              <circle cx="12" cy="12" r="10" />
+            </svg>
+            <span class="ms-1"> Aula ativa</span>
+          </button>
         </div>
 
-        <div class="hidden md:block">
-          <table class="table-auto w-full border border-gray-300 m-3 shadow-sm">
+        <div class="flex gap-4 text-sm text-gray-600">
+          <span>{{ offer.classroomName }}</span>
+          <span>{{ offer.timeStart }} - {{ offer.timeEnd }}</span>
+        </div>
+
+        <div class="hidden md:block mt-4">
+          <table class="table-auto w-full border border-gray-300 shadow-sm">
             <thead>
               <tr>
-                <th class="border border-gray-300 p-2">Nome do Aluno</th>
-                <th class="border border-gray-300 p-2">Matrícula</th>
-                <th class="border border-gray-300 p-2">Presenças</th>
-                <th class="border border-gray-300 p-2">Ausências</th>
+                <th class="border p-2">Aluno</th>
+                <th class="border p-2">Matrícula</th>
+                <th class="border p-2">Presenças</th>
+                <th class="border p-2">Ausências</th>
               </tr>
             </thead>
             <tbody>
               <tr
                 v-for="aluno in offer.students"
                 :key="aluno.id"
-                class="hover:bg-gray-50 cursor-pointer transition"
+                class="hover:bg-gray-50"
               >
-                <td class="p-3 text-center">{{ aluno.nome }}</td>
-                <td class="p-3 text-center">{{ aluno.matricula }}</td>
-                <td class="p-3 text-center">{{ aluno.presencas }}</td>
-                <td class="p-3 text-center">{{ aluno.ausencias }}</td>
+                <td class="p-2 text-center">{{ aluno.nome }}</td>
+                <td class="p-2 text-center">{{ aluno.matricula }}</td>
+                <td class="p-2 text-center">{{ aluno.presencas }}</td>
+                <td class="p-2 text-center">{{ aluno.ausencias }}</td>
               </tr>
             </tbody>
           </table>
