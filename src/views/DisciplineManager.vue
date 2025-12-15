@@ -20,9 +20,6 @@ const activeOfferings = ref([]);
 
 const teacherId = localStorage.getItem("user-id");
 
-/* ==============================
-   CARREGAR DISCIPLINAS
-================================ */
 async function loadOfferings() {
   try {
     const data = await TeacherDAO.getOfferings(teacherId);
@@ -75,9 +72,6 @@ async function loadOfferings() {
   }
 }
 
-/* ==============================
-   CARREGAR AULAS ATIVAS
-================================ */
 async function loadActiveSessions() {
   try {
     const sessions = await ClassSessionDAO.getAllActive();
@@ -90,9 +84,6 @@ async function loadActiveSessions() {
   }
 }
 
-/* ==============================
-   HELPERS
-================================ */
 function isActiveSession(offeringId) {
   return activeOfferings.value.includes(offeringId);
 }
@@ -105,9 +96,6 @@ function goToDisciplineReport(offeringId) {
   router.push(`/disciplinas/${offeringId}/gerenciar`);
 }
 
-/* ==============================
-   FILTRO
-================================ */
 const filteredOfferings = computed(() =>
   offerings.value.filter((o) =>
     o.subjectName.toLowerCase().includes(searchQuery.value.toLowerCase())
@@ -220,28 +208,57 @@ onMounted(async () => {
         </div>
 
         <div class="hidden md:block mt-4">
-          <table class="table-auto w-full border border-gray-300 shadow-sm">
-            <thead>
-              <tr>
-                <th class="border p-2">Aluno</th>
-                <th class="border p-2">Matrícula</th>
-                <th class="border p-2">Presenças</th>
-                <th class="border p-2">Ausências</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="aluno in offer.students"
-                :key="aluno.id"
-                class="hover:bg-gray-50"
-              >
-                <td class="p-2 text-center">{{ aluno.nome }}</td>
-                <td class="p-2 text-center">{{ aluno.matricula }}</td>
-                <td class="p-2 text-center">{{ aluno.presencas }}</td>
-                <td class="p-2 text-center">{{ aluno.ausencias }}</td>
-              </tr>
-            </tbody>
-          </table>
+          <div
+            class="rounded-lg border border-gray-200 overflow-hidden shadow-sm"
+          >
+            <table class="w-full text-sm">
+              <thead class="bg-gray-50 text-gray-600">
+                <tr>
+                  <th class="px-4 py-3 text-left font-semibold">Aluno</th>
+                  <th class="px-4 py-3 text-center font-semibold">Matrícula</th>
+                  <th class="px-4 py-3 text-center font-semibold">Presenças</th>
+                  <th class="px-4 py-3 text-center font-semibold">Ausências</th>
+                </tr>
+              </thead>
+
+              <tbody class="divide-y divide-gray-200">
+                <tr
+                  v-for="aluno in offer.students"
+                  :key="aluno.id"
+                  class="hover:bg-gray-50 transition"
+                >
+                  <td class="px-4 py-3">
+                    <div class="font-medium text-gray-800">
+                      {{ aluno.nome }}
+                    </div>
+                    <div class="text-xs text-gray-500">
+                      {{ aluno.curso }}
+                    </div>
+                  </td>
+
+                  <td class="px-4 py-3 text-center text-gray-700">
+                    {{ aluno.matricula }}
+                  </td>
+
+                  <td class="px-4 py-3 text-center">
+                    <span
+                      class="inline-flex items-center justify-center rounded-full bg-green-100 text-green-800 text-xs font-semibold px-3 py-1"
+                    >
+                      {{ aluno.presencas }}
+                    </span>
+                  </td>
+
+                  <td class="px-4 py-3 text-center">
+                    <span
+                      class="inline-flex items-center justify-center rounded-full bg-red-100 text-red-800 text-xs font-semibold px-3 py-1"
+                    >
+                      {{ aluno.ausencias }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

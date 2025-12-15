@@ -92,7 +92,7 @@
 
 <script setup>
 import { shallowRef, computed } from 'vue'
-import { BookCheck, LogOut } from 'lucide-vue-next'
+import { BookCheck, LogOut, History  } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
 
@@ -104,7 +104,8 @@ defineProps({
 })
 
 const menuItems = shallowRef([
-  { to: '/disciplinas', label: 'Gerenciar Disciplinas', icon: BookCheck }
+  { to: '/disciplinas', label: 'Gerenciar Disciplinas', icon: BookCheck },
+  { to: '/classSessionHistoryManager', label: 'Historico de Aulas', icon: History  }
 ])
 
 const usuarioNome = computed(() => userStore.name ?? "Usuário")

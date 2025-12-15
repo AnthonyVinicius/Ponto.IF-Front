@@ -5,49 +5,43 @@
         @click="voltarPagina"
         class="bg-[#1C5E27] hover:bg-[#174a20] text-white font-semibold px-4 py-2 rounded-md transition-colors flex items-center gap-2"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="lucide lucide-arrow-big-left"
-        >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+          viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path
             d="M13 9a1 1 0 0 1-1-1V5.061a1 1 0 0 0-1.811-.75l-6.835 6.836a1.207 1.207 0 0 0 0 1.707l6.835 6.835a1 1 0 0 0 1.811-.75V16a1 1 0 0 1 1-1h6a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1z"
           />
         </svg>
-        <span>Voltar</span>
+        Voltar
       </button>
     </div>
 
     <div class="bg-white rounded-lg p-6 shadow-sm font-roboto">
-      <div class="flex flex-wrap items-center gap-4 mb-6 border-b pb-4">
+
+      <!-- Header -->
+      <div class="flex flex-wrap items-center gap-6 mb-8 border-b pb-4">
         <div class="flex-1 min-w-[200px]">
           <h1 class="text-xl font-semibold text-gray-800">
             Disciplina: {{ disciplineInfo?.name || "Carregando..." }}
           </h1>
 
-          <div class="text-sm text-gray-600 mt-1 space-y-1">
-            <p>
-              <span class="font-medium">Curso:</span>
-              {{ disciplineInfo?.course?.name || "N/A" }} —
-              <span class="font-medium">Professor:</span>
-              {{ disciplineInfo?.teacher?.name || "N/A" }}
-            </p>
-            <p v-if="disciplineInfo?.term || disciplineInfo?.schedule">
-              <span class="font-medium">Semestre:</span>
-              {{ disciplineInfo.term }} —
-              <span class="font-medium">Horário:</span>
-              {{ disciplineInfo.schedule?.day }} ({{
-                disciplineInfo.schedule?.time
-              }})
-            </p>
-          </div>
+          <p class="text-sm text-gray-600 mt-1">
+            <span class="font-medium">Curso:</span>
+            {{ disciplineInfo?.course?.name || "N/A" }} —
+            <span class="font-medium">Professor:</span>
+            {{ disciplineInfo?.teacher?.name || "N/A" }}
+          </p>
+
+          <p
+            v-if="disciplineInfo?.term || disciplineInfo?.schedule"
+            class="text-sm text-gray-600"
+          >
+            <span class="font-medium">Semestre:</span>
+            {{ disciplineInfo.term }} —
+            <span class="font-medium">Horário:</span>
+            {{ disciplineInfo.schedule?.day }}
+            ({{ disciplineInfo.schedule?.time }})
+          </p>
         </div>
 
         <button
@@ -58,59 +52,35 @@
         </button>
       </div>
 
-      <div class="flex flex-wrap gap-6 mb-6">
-        <div class="w-full md:w-auto flex justify-center md:block">
+      <!-- Gráfico + Resumo -->
+      <div class="flex flex-wrap gap-6 mb-8">
+        <div class="w-full md:w-auto flex justify-center">
           <FrequencyChart :percentage="disciplineInfo?.frequency || 0" />
         </div>
 
-        <div class="flex-1 border border-gray-200 p-4 rounded-md min-w-[250px]">
-          <h2 class="text-base font-semibold text-[#1C5E27] mb-3">
+        <div class="flex-1 border border-gray-200 rounded-lg p-4 min-w-[250px]">
+          <h2 class="text-base font-semibold text-[#1C5E27] mb-4">
             Resumo de Presença
           </h2>
 
-          <div class="hidden md:block">
-            <table
-              class="table-auto w-full border-collapse border border-gray-300 shadow-sm"
-            >
-              <thead class="bg-gray-100">
-                <tr>
-                  <th class="border p-2 text-gray-700">Presenças</th>
-                  <th class="border p-2 text-gray-700">Ausências</th>
-                  <th class="border p-2 text-gray-700">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="hover:bg-gray-50 text-center">
-                  <td class="p-2 text-green-700 font-medium">
-                    {{ disciplineInfo?.presences }}
-                  </td>
-                  <td class="p-2 text-red-700 font-medium">
-                    {{ disciplineInfo?.absences }}
-                  </td>
-                  <td class="p-2 font-bold">
-                    {{
-                      (disciplineInfo?.presences || 0) +
-                      (disciplineInfo?.absences || 0)
-                    }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="md:hidden space-y-2">
-            <div class="border border-gray-300 rounded-md p-3 bg-gray-50">
-              <p class="text-sm flex justify-between">
-                <span class="font-medium">Presenças:</span>
+          <div class="grid grid-cols-3 gap-4 text-center">
+            <div class="bg-green-50 rounded-lg p-4">
+              <p class="text-sm text-gray-600">Presenças</p>
+              <p class="text-xl font-bold text-green-700">
                 {{ disciplineInfo?.presences }}
               </p>
-              <p class="text-sm flex justify-between">
-                <span class="font-medium">Ausências:</span>
+            </div>
+
+            <div class="bg-red-50 rounded-lg p-4">
+              <p class="text-sm text-gray-600">Ausências</p>
+              <p class="text-xl font-bold text-red-700">
                 {{ disciplineInfo?.absences }}
               </p>
-              <hr class="my-2 border-gray-300" />
-              <p class="text-sm flex justify-between">
-                <span class="font-bold">Total:</span>
+            </div>
+
+            <div class="bg-gray-50 rounded-lg p-4">
+              <p class="text-sm text-gray-600">Total</p>
+              <p class="text-xl font-bold text-gray-800">
                 {{
                   (disciplineInfo?.presences || 0) +
                   (disciplineInfo?.absences || 0)
@@ -121,53 +91,57 @@
         </div>
       </div>
 
-      <div class="border border-gray-200 p-4 rounded-md mb-6">
-        <h2 class="text-base font-semibold text-[#1C5E27] mb-3">
+      <!-- Alunos -->
+      <div class="border border-gray-200 rounded-lg p-4">
+        <h2 class="text-base font-semibold text-[#1C5E27] mb-4">
           Alunos Matriculados
         </h2>
 
-        <div v-if="loadingStudents" class="text-center py-4 text-gray-500">
+        <div v-if="loadingStudents" class="text-center py-6 text-gray-500">
           Carregando alunos...
         </div>
 
         <div v-else>
-          <div class="hidden md:block">
-            <table
-              class="table-auto w-full border-collapse border border-gray-300 shadow-sm"
-            >
-              <thead class="bg-gray-100">
+          <div class="rounded-lg border border-gray-200 overflow-hidden shadow-sm hidden md:block">
+            <table class="w-full text-sm">
+              <thead class="bg-gray-50 text-gray-600">
                 <tr>
-                  <th class="border p-2 text-left text-gray-700">Nome</th>
-                  <th class="border p-2 text-center text-gray-700">
-                    Matrícula
-                  </th>
-                  <th class="border p-2 text-center text-gray-700">
-                    Situação Atual
-                  </th>
+                  <th class="px-4 py-3 text-left font-semibold">Aluno</th>
+                  <th class="px-4 py-3 text-center font-semibold">Matrícula</th>
+                  <th class="px-4 py-3 text-center font-semibold">Situação</th>
                 </tr>
               </thead>
-              <tbody>
+
+              <tbody class="divide-y divide-gray-200">
                 <tr
                   v-for="student in disciplineInfo?.students"
                   :key="student.id"
-                  class="hover:bg-gray-50 transition-colors"
+                  class="hover:bg-gray-50 transition"
                 >
-                  <td class="p-2">{{ student.name }}</td>
-                  <td class="p-2 text-center font-mono text-sm">
+                  <td class="px-4 py-3">
+                    <div class="font-medium text-gray-800">
+                      {{ student.name }}
+                    </div>
+                    <div class="text-xs text-gray-500">
+                      {{ student.course }}
+                    </div>
+                  </td>
+
+                  <td class="px-4 py-3 text-center font-mono text-gray-700">
                     {{ student.registration }}
                   </td>
-                  <td
-                    class="p-2 text-center font-medium"
-                    :class="
-                      student.isPresent ? 'text-green-700' : 'text-gray-500'
-                    "
-                  >
-                    {{ student.isPresent ? "Presente" : "Indefinido" }}
-                  </td>
-                </tr>
-                <tr v-if="disciplineInfo?.students?.length === 0">
-                  <td colspan="4" class="p-4 text-center text-gray-500">
-                    Nenhum aluno matriculado.
+
+                  <td class="px-4 py-3 text-center">
+                    <span
+                      class="inline-flex rounded-full px-3 py-1 text-xs font-semibold"
+                      :class="
+                        student.isPresent
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-gray-100 text-gray-600'
+                      "
+                    >
+                      {{ student.isPresent ? "Presente" : "Indefinido" }}
+                    </span>
                   </td>
                 </tr>
               </tbody>
@@ -178,42 +152,35 @@
             <div
               v-for="student in disciplineInfo?.students"
               :key="student.id"
-              class="border border-gray-300 rounded-lg p-4 shadow-sm bg-white"
+              class="border border-gray-200 rounded-lg p-4"
             >
-              <div class="flex justify-between items-start">
-                <div>
-                  <p class="font-semibold text-gray-800">{{ student.name }}</p>
-                  <p class="text-xs text-gray-500 font-mono">
-                    {{ student.registration }}
-                  </p>
-                </div>
+              <p class="font-semibold text-gray-800">
+                {{ student.name }}
+              </p>
+              <p class="text-xs text-gray-500 font-mono">
+                {{ student.registration }}
+              </p>
+              <p class="text-sm mt-2">
                 <span
-                  class="text-xs px-2 py-1 rounded-full font-medium"
+                  class="inline-flex rounded-full px-2 py-1 text-xs font-semibold"
                   :class="
                     student.isPresent
                       ? 'bg-green-100 text-green-800'
                       : 'bg-gray-100 text-gray-600'
                   "
                 >
-                  {{ student.isPresent ? "Presente" : "-" }}
+                  {{ student.isPresent ? "Presente" : "Indefinido" }}
                 </span>
-              </div>
-              <p class="text-sm text-gray-700 mt-2">
-                <span class="font-medium">Curso:</span> {{ student.course }}
               </p>
             </div>
-            <p
-              v-if="disciplineInfo?.students?.length === 0"
-              class="text-center text-gray-500"
-            >
-              Nenhum aluno matriculado.
-            </p>
           </div>
         </div>
       </div>
+
     </div>
   </BaseLayout>
 </template>
+
 
 <script setup>
 import { ref, onMounted } from "vue";

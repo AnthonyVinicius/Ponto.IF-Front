@@ -11,6 +11,13 @@ class ClassSessionDAO extends GenericDAO {
     return res.data;
   }
 
+  async getAllByOfferingId(offeringId)
+ {
+    const res = await this.api.get(
+      `${this.baseURL}/offering/${offeringId}`
+    );
+    return res.data;
+  }
   async getAllActive() {
     const res = await this.api.get(`${this.baseURL}/allActive`);
     return res.data; 

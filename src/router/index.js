@@ -4,6 +4,7 @@ import LoginView from "../views/LoginView.vue";
 import RegistrarPresenca from "../views/RegistrarPresenca.vue";
 import DisciplineManager from "../views/DisciplineManager.vue";
 import NoAccess from "../views/NoAccess.vue";
+import ClassSessionHistoryManager from "../views/ClassSessionHistoryManager.vue";
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -37,6 +38,22 @@ const router = createRouter({
       name: "DisciplineManager",
       component: DisciplineManager,
     },
+    {
+      path: "/classSessionHistoryManager",
+      name: "classSessionHistoryManeger",
+      component: ClassSessionHistoryManager,
+    },
+    {
+      path: "/classSessionHistoryDashboard/:offeringId",
+      name: "dashboard-disciplina",
+      component: () => import("../views/ClassSessionHistoryDashboard.vue"),
+    },
+    {
+      path: "/dashboard/:offeringId/session/:sessionId",
+      name: "session-history",
+      component: () => import("../views/ClassSessionHistoryDetails.vue"),
+    },
+
     {
       path: "/dashboard/:userId/user",
       name: "UserDashboard",
