@@ -34,7 +34,6 @@ async function loadAttendances() {
           ...a,
           studentName: student?.name ?? `Aluno #${a.studentId}`,
           registration: student?.registration ?? "-",
-        
         };
       })
     );
@@ -53,9 +52,37 @@ onMounted(loadAttendances);
 <template>
   <BaseLayout>
     <div class="bg-white rounded-lg p-6 shadow-sm font-roboto">
-      <div class="mb-6">
-        <h1 class="text-xl font-bold text-gray-800">Histórico da Aula</h1>
-        <p class="text-sm text-gray-500">Presenças registradas nesta sessão</p>
+      <div
+        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6"
+      >
+        <div>
+          <h1 class="text-xl font-bold text-gray-800">Histórico da Aula</h1>
+          <p class="text-sm text-gray-500">
+            Presenças registradas nesta sessão
+          </p>
+        </div>
+
+        <button
+          class="bg-[#1C5E27] hover:bg-[#174a20] text-white font-semibold px-4 py-2 rounded-md flex items-center gap-2 transition-colors"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-arrow-down-to-line"
+          >
+            <path d="M12 17V3" />
+            <path d="m6 11 6 6 6-6" />
+            <path d="M19 21H5" />
+          </svg>
+          Exportar CSV
+        </button>
       </div>
 
       <div v-if="loading" class="text-gray-500 text-center py-8">
@@ -88,7 +115,7 @@ onMounted(loadAttendances);
                   {{ a.studentName }}
                 </div>
                 <div class="text-xs text-gray-500">
-                  {{ a.registration }} • {{ a.course }}
+                  {{ a.registration }}
                 </div>
               </td>
 
@@ -117,12 +144,12 @@ onMounted(loadAttendances);
           </tbody>
         </table>
       </div>
-        <button
-      @click="voltar"
-      class="bg-[#1C5E27] text-white font-semibold py-2.5 px-5 rounded-lg fixed bottom-6 right-6 shadow-lg"
-    >
-      Voltar
-    </button>
+      <button
+        @click="voltar"
+        class="bg-[#1C5E27] text-white font-semibold py-2.5 px-5 rounded-lg fixed bottom-6 right-6 shadow-lg"
+      >
+        Voltar
+      </button>
     </div>
   </BaseLayout>
 </template>

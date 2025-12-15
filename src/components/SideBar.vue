@@ -17,7 +17,7 @@
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
-          class="lucide lucide-fingerprint-icon lucide-fingerprint"
+          class="lucide lucide-fingerprint"
         >
           <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4" />
           <path d="M14 13.12c0 2.38 0 6.38-1 8.88" />
@@ -30,9 +30,10 @@
           <path d="M9 6.8a6 6 0 0 1 9 5.2v2" />
         </svg>
       </div>
+
       <span
         v-show="isExpanded"
-        class="text-xm font-bold text-gray-800 transition-opacity duration-200 whitespace-nowrap"
+        class="text-sm font-bold text-gray-800 whitespace-nowrap"
       >
         Admin de Presenças
       </span>
@@ -40,14 +41,19 @@
 
     <div class="mt-10 flex flex-1 flex-col justify-between">
 
-      <nav :class="['-mx-3 space-y-3', isExpanded ? '' : 'flex flex-col items-center']">
+      <nav
+        :class="[
+          '-mx-3 space-y-3',
+          isExpanded ? '' : 'flex flex-col items-center'
+        ]"
+      >
         <router-link
           v-for="item in menuItems"
           :key="item.label"
           :to="item.to"
           :title="!isExpanded ? item.label : ''"
           :class="[
-            'flex transform items-center rounded-lg px-3 py-3 text-gray-600 transition-colors duration-300 hover:bg-[#1C5E27] hover:text-white',
+            'flex items-center rounded-lg px-3 py-3 text-gray-600 transition-colors duration-300 hover:bg-[#1C5E27] hover:text-white',
             isExpanded ? '' : 'justify-center'
           ]"
         >
@@ -78,37 +84,61 @@
           </span>
         </button>
 
-        <div v-show="isExpanded" class="flex flex-col gap-3 mt-4 border-t pt-4">
-          <h1 class="text-base font-semibold text-gray-700 whitespace-nowrap">
+        <div v-show="isExpanded" class="flex flex-col gap-2 mt-4 border-t pt-4">
+          <span class="text-sm font-semibold text-gray-700 whitespace-nowrap">
             {{ usuarioNome }}
-          </h1>
+          </span>
+          <span class="text-xs text-gray-500">
+            {{ isAdmin ? 'Administrador' : 'Usuário' }}
+          </span>
         </div>
 
       </div>
-
     </div>
   </aside>
 </template>
 
 <script setup>
-import { shallowRef, computed } from 'vue'
-import { BookCheck, LogOut, History  } from 'lucide-vue-next'
+import { computed } from 'vue'
+import { BookCheck, LogOut, History, Users } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
-
-const router = useRouter()
-const userStore = useUserStore()
 
 defineProps({
   isExpanded: { type: Boolean, required: true }
 })
 
-const menuItems = shallowRef([
-  { to: '/disciplinas', label: 'Gerenciar Disciplinas', icon: BookCheck },
-  { to: '/classSessionHistoryManager', label: 'Historico de Aulas', icon: History  }
-])
+const router = useRouter()
+const userStore = useUserStore()
 
-const usuarioNome = computed(() => userStore.name ?? "Usuário")
+const isAdmin = computed(() => userStore.role === 'ADMIN')
+
+const menuItems = computed(() => {
+  if (isAdmin.value) {
+    return [
+      {
+        to: '/alunos',
+        label: 'Gerenciar Alunos',
+        icon: Users
+      }
+    ]
+  }
+
+  return [
+    {
+      to: '/disciplinas',
+      label: 'Gerenciar Disciplinas',
+      icon: BookCheck
+    },
+    {
+      to: '/classSessionHistoryManager',
+      label: 'Histórico de Aulas',
+      icon: History
+    }
+  ]
+})
+
+const usuarioNome = computed(() => userStore.name ?? 'Usuário')
 
 function logout() {
   userStore.logout()

@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import StudentStatus from "./StudentStatus.vue";
 
-const props = defineProps({
+defineProps({
   alunos: {
     type: Array,
     required: true,
@@ -20,38 +20,44 @@ function handleStatusChange(index, newStatus) {
 
 <template>
   <div class="overflow-x-auto">
-    <table class="hidden md:table table-auto w-full border border-gray-300 m-3 shadow-sm">
-      <thead>
+    <table
+      class="hidden md:table table-auto w-full border border-gray-300 m-3 shadow-sm"
+    >
+      <thead class="bg-gray-100">
         <tr>
-          <th v-for="title in titles" :key="title" class="border border-gray-300 p-2">
+          <th
+            v-for="title in titles"
+            :key="title"
+            class="border border-gray-300 p-2 text-gray-700"
+          >
             {{ title }}
           </th>
         </tr>
       </thead>
 
       <tbody>
-        <tr v-for="(aluno, index) in alunos" :key="index">
-          <td
-            @click="$emit('aluno-click', aluno.id)"
-            class="p-3 cursor-pointer hover:text-indigo-800 transition"
-          >
+        <tr
+          v-for="(aluno, index) in alunos"
+          :key="index"
+          class="hover:bg-gray-50 transition"
+        >
+          <td class="p-3 font-medium text-gray-800">
             {{ aluno.name }}
-            <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
           </td>
 
-          <td class="p-3 text-center">
+          <td class="p-3 text-center text-sm text-gray-600">
             {{ aluno.hour }}
           </td>
 
-          <td class="p-3 text-center">
+          <td class="p-3 text-center text-sm text-gray-600">
             {{ aluno.date }}
           </td>
 
           <td class="p-3 text-center">
-            <StudentStatus :status="aluno.status" @update="(status) => handleStatusChange(index, status)" />
+            <StudentStatus
+              :status="aluno.status"
+              @update="(status) => handleStatusChange(index, status)"
+            />
           </td>
         </tr>
       </tbody>
@@ -61,25 +67,25 @@ function handleStatusChange(index, newStatus) {
       <div
         v-for="(aluno, index) in alunos"
         :key="index"
-        class="border border-gray-300 rounded-lg shadow-sm p-4"
+        class="border border-gray-300 rounded-lg shadow-sm p-4 bg-white"
       >
-        <div
-          @click="$emit('aluno-click', aluno.id)"
-          class="flex justify-between items-center cursor-pointer hover:text-indigo-800 transition"
-        >
-          <p class="font-semibold text-gray-800">{{ aluno.name }}</p>
-
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-            viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </div>
+        <p class="font-semibold text-gray-800">
+          {{ aluno.name }}
+        </p>
 
         <div class="mt-3 text-sm text-gray-700 space-y-1">
-          <p><span class="font-medium">Horário:</span> {{ aluno.hour }}</p>
-          <p><span class="font-medium">Data:</span> {{ aluno.date }}</p>
+          <p>
+            <span class="font-medium">Horário:</span> {{ aluno.hour }}
+          </p>
+          <p>
+            <span class="font-medium">Data:</span> {{ aluno.date }}
+          </p>
+
           <div class="mt-2">
-            <StudentStatus :status="aluno.status" @update="(status) => handleStatusChange(index, status)" />
+            <StudentStatus
+              :status="aluno.status"
+              @update="(status) => handleStatusChange(index, status)"
+            />
           </div>
         </div>
       </div>

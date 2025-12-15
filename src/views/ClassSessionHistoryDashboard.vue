@@ -1,15 +1,14 @@
 <template>
   <BaseLayout>
     <div class="bg-white rounded-lg p-6 shadow-sm font-roboto">
-
-      <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-8">
+      <div
+        class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-8"
+      >
         <div>
           <h1 class="text-xl font-bold text-gray-800">
             {{ subjectName }}
           </h1>
-          <p class="text-sm text-gray-500">
-            Histórico de aulas registradas
-          </p>
+          <p class="text-sm text-gray-500">Histórico de aulas registradas</p>
 
           <div class="mt-2">
             <span
@@ -41,6 +40,27 @@
               {{ opt.label }}
             </option>
           </select>
+          <button
+            class="bg-[#1C5E27] hover:bg-[#174a20] text-white font-semibold px-4 py-2 rounded-md flex items-center gap-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-arrow-down-to-line-icon lucide-arrow-down-to-line"
+            >
+              <path d="M12 17V3" />
+              <path d="m6 11 6 6 6-6" />
+              <path d="M19 21H5" />
+            </svg>
+            Exportar CSV
+          </button>
         </div>
       </div>
 
@@ -90,15 +110,20 @@
               @click="goToSessionHistory(session.id)"
               class="border border-gray-200 rounded-lg p-4 hover:shadow-md hover:border-[#1C5E27] cursor-pointer transition group"
             >
-              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div
+                class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+              >
                 <div>
                   <p class="text-xs text-gray-500">Horário</p>
                   <p class="text-base font-medium text-gray-800">
                     {{
-                      new Date(session.sessionStart).toLocaleTimeString("pt-BR", {
-                        hour: "2-digit",
-                        minute: "2-digit"
-                      })
+                      new Date(session.sessionStart).toLocaleTimeString(
+                        "pt-BR",
+                        {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        }
+                      )
                     }}
                     –
                     {{
@@ -119,9 +144,11 @@
                       {{
                         Math.round(
                           (new Date(session.sessionEnd) -
-                            new Date(session.sessionStart)) / 60000
+                            new Date(session.sessionStart)) /
+                            60000
                         )
-                      }} min
+                      }}
+                      min
                     </span>
                     <span v-else>-</span>
                   </p>
@@ -137,11 +164,9 @@
           </div>
         </div>
       </div>
-
     </div>
   </BaseLayout>
 </template>
-
 
 <script setup>
 import { onMounted, ref, computed } from "vue";
