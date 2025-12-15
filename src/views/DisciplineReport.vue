@@ -209,7 +209,7 @@ async function loadDisciplineInfo() {
 }
 
 async function comecarAula() {
-  await SubjectOfferingDAO.startOffering(route.params.offeringId, teacherId);
+  await SubjectDAO.startOffering(route.params.offeringId, teacherId);
   router.push({ name: "Dashboard" });
 }
 
