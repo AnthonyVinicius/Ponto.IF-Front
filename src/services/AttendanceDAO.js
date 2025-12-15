@@ -15,6 +15,15 @@ class AttendanceDAO extends GenericDAO {
     const res = await this.api.get(`${this.baseURL}/session/${sessionId}`);
     return res.data;
   }
+
+   exportCsvByOffering(offeringId) {
+    return this.api.get(
+      `/api/attendance/offering/${offeringId}/export/csv`,
+      {
+        responseType: "blob",
+      }
+    );
+  }
 }
 
 export default new AttendanceDAO();

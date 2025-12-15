@@ -18,7 +18,6 @@
 
     <div class="bg-white rounded-lg p-6 shadow-sm font-roboto">
 
-      <!-- Header -->
       <div class="flex flex-wrap items-center gap-6 mb-8 border-b pb-4">
         <div class="flex-1 min-w-[200px]">
           <h1 class="text-xl font-semibold text-gray-800">
@@ -52,7 +51,6 @@
         </button>
       </div>
 
-      <!-- Gráfico + Resumo -->
       <div class="flex flex-wrap gap-6 mb-8">
         <div class="w-full md:w-auto flex justify-center">
           <FrequencyChart :percentage="disciplineInfo?.frequency || 0" />
@@ -91,7 +89,6 @@
         </div>
       </div>
 
-      <!-- Alunos -->
       <div class="border border-gray-200 rounded-lg p-4">
         <h2 class="text-base font-semibold text-[#1C5E27] mb-4">
           Alunos Matriculados

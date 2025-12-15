@@ -40,7 +40,7 @@
               {{ opt.label }}
             </option>
           </select>
-          <button
+          <button @click="downloadCsv"
             class="bg-[#1C5E27] hover:bg-[#174a20] text-white font-semibold px-4 py-2 rounded-md flex items-center gap-2"
           >
             <svg
@@ -171,9 +171,8 @@
 <script setup>
 import { onMounted, ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-
+import AttendanceDAO from "../services/AttendanceDAO";
 import { Circle } from "lucide-vue-next";
-
 import BaseLayout from "../components/BaseLayout.vue";
 import ClassSessionDAO from "../services/ClassSessionDAO";
 import SubjectDAO from "../services/SubjectDAO";
@@ -258,6 +257,43 @@ const sessionsByDay = computed(() => {
   return map;
 });
 
+async function downloadCsv() {
+  try {
+    const response = await AttendanceDAO.exportCsvByOffering(offeringId);
+
+    // Detecta nome do arquivo se o backend enviar Content-Disposition
+    const contentDisposition = response.headers["content-disposition"];
+    let filename = `frequencia-oferta-${offeringId}.csv`;
+
+    if (contentDisposition) {
+      const match = contentDisposition.match(/filename="?([^"]+)"?/);
+      if (match?.[1]) {
+        filename = match[1];
+      }
+    }
+
+    const blob = new Blob(
+      [response.data],
+      { type: "text/csv;charset=utf-8;" }
+    );
+
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Erro ao baixar CSV:", error);
+    alert("Erro ao baixar o arquivo CSV");
+  }
+}
+
 function goToSessionHistory(sessionId) {
   router.push(`/dashboard/${offeringId}/session/${sessionId}`);
 }
@@ -266,4 +302,5 @@ onMounted(async () => {
   await loadSubjectName();
   await loadSessions();
 });
+
 </script>

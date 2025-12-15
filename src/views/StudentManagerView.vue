@@ -104,10 +104,6 @@ onMounted(loadStudents);
               <td class="p-3 text-center font-mono text-sm">
                 {{ student.registration ?? "-" }}
               </td>
-
-              <td class="p-3 text-sm text-gray-700">
-                {{ student.course?.name ?? "Sem curso" }}
-              </td>
             </tr>
           </tbody>
         </table>

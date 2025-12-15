@@ -90,13 +90,6 @@ onMounted(loadOfferings);
               class="rounded-md border border-gray-200 py-2 pl-10 pr-4 text-sm shadow-sm w-full"
             />
           </div>
-
-          <button
-            class="bg-[#1C5E27] hover:bg-[#174a20] text-white font-semibold px-4 py-2 rounded-md flex items-center gap-2"
-          >
-            <Download class="h-5 w-5" />
-            Exportar CSV
-          </button>
         </div>
       </div>
 
