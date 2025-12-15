@@ -21,25 +21,21 @@
       <div class="flex flex-wrap items-center gap-6 mb-8 border-b pb-4">
         <div class="flex-1 min-w-[200px]">
           <h1 class="text-xl font-semibold text-gray-800">
-            Disciplina: {{ disciplineInfo?.name || "Carregando..." }}
+            Disciplina: {{ disciplineInfo.name }}
           </h1>
 
           <p class="text-sm text-gray-600 mt-1">
             <span class="font-medium">Curso:</span>
-            {{ disciplineInfo?.course?.name || "N/A" }} —
+            {{ disciplineInfo.course.name }} —
             <span class="font-medium">Professor:</span>
-            {{ disciplineInfo?.teacher?.name || "N/A" }}
+            {{ disciplineInfo.teacher.name }}
           </p>
 
-          <p
-            v-if="disciplineInfo?.term || disciplineInfo?.schedule"
-            class="text-sm text-gray-600"
-          >
+          <p class="text-sm text-gray-600">
             <span class="font-medium">Semestre:</span>
             {{ disciplineInfo.term }} —
             <span class="font-medium">Horário:</span>
-            {{ disciplineInfo.schedule?.day }}
-            ({{ disciplineInfo.schedule?.time }})
+            {{ disciplineInfo.schedule.day }} ({{ disciplineInfo.schedule.time }})
           </p>
         </div>
 
@@ -53,7 +49,7 @@
 
       <div class="flex flex-wrap gap-6 mb-8">
         <div class="w-full md:w-auto flex justify-center">
-          <FrequencyChart :percentage="disciplineInfo?.frequency || 0" />
+          <FrequencyChart :percentage="disciplineInfo.frequency" />
         </div>
 
         <div class="flex-1 border border-gray-200 rounded-lg p-4 min-w-[250px]">
@@ -65,24 +61,21 @@
             <div class="bg-green-50 rounded-lg p-4">
               <p class="text-sm text-gray-600">Presenças</p>
               <p class="text-xl font-bold text-green-700">
-                {{ disciplineInfo?.presences }}
+                {{ disciplineInfo.presences }}
               </p>
             </div>
 
             <div class="bg-red-50 rounded-lg p-4">
               <p class="text-sm text-gray-600">Ausências</p>
               <p class="text-xl font-bold text-red-700">
-                {{ disciplineInfo?.absences }}
+                {{ disciplineInfo.absences }}
               </p>
             </div>
 
             <div class="bg-gray-50 rounded-lg p-4">
               <p class="text-sm text-gray-600">Total</p>
               <p class="text-xl font-bold text-gray-800">
-                {{
-                  (disciplineInfo?.presences || 0) +
-                  (disciplineInfo?.absences || 0)
-                }}
+                {{ disciplineInfo.presences + disciplineInfo.absences }}
               </p>
             </div>
           </div>
@@ -105,45 +98,35 @@
                 <tr>
                   <th class="px-4 py-3 text-left font-semibold">Aluno</th>
                   <th class="px-4 py-3 text-center font-semibold">Matrícula</th>
+                  <th class="px-4 py-3 text-center font-semibold">Presenças</th>
+                  <th class="px-4 py-3 text-center font-semibold">Faltas</th>
                 </tr>
               </thead>
 
               <tbody class="divide-y divide-gray-200">
                 <tr
-                  v-for="student in disciplineInfo?.students"
-                  :key="student.id"
+                  v-for="student in disciplineInfo.students"
+                  :key="student.studentId"
                   class="hover:bg-gray-50 transition"
                 >
-                  <td class="px-4 py-3">
-                    <div class="font-medium text-gray-800">
-                      {{ student.name }}
-                    </div>
-                    <div class="text-xs text-gray-500">
-                      {{ student.course }}
-                    </div>
+                  <td class="px-4 py-3 font-medium text-gray-800">
+                    {{ student.studentName }}
                   </td>
 
                   <td class="px-4 py-3 text-center font-mono text-gray-700">
                     {{ student.registration }}
                   </td>
+
+                  <td class="px-4 py-3 text-center text-green-700 font-semibold">
+                    {{ student.presents }}
+                  </td>
+
+                  <td class="px-4 py-3 text-center text-red-700 font-semibold">
+                    {{ student.absents }}
+                  </td>
                 </tr>
               </tbody>
             </table>
-          </div>
-
-          <div class="md:hidden space-y-3">
-            <div
-              v-for="student in disciplineInfo?.students"
-              :key="student.id"
-              class="border border-gray-200 rounded-lg p-4"
-            >
-              <p class="font-semibold text-gray-800">
-                {{ student.name }}
-              </p>
-              <p class="text-xs text-gray-500 font-mono">
-                {{ student.registration }}
-              </p>
-            </div>
           </div>
         </div>
       </div>
@@ -152,28 +135,24 @@
   </BaseLayout>
 </template>
 
-
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 import BaseLayout from "../components/BaseLayout.vue";
 import FrequencyChart from "../components/FrequencyChart.vue";
 
-import ClassSessionDAO from "../services/ClassSessionDAO";
-import EnrollmentDAO from "../services/EnrollmentDAO";
-import StudentDAO from "../services/StudentDAO";
+import AttendanceDAO from "../services/AttendanceDAO";
+import SubjectOfferingDAO from "../services/SubjectOfferingDAO";
 import SubjectDAO from "../services/SubjectDAO";
-import OfferingDAO from "../services/SubjectOfferingDAO";
 import CourseDAO from "../services/CourseDAO";
 import TeacherDAO from "../services/TeacherDAO";
-import { useNotification } from "../composables/useNotification";
-const router = useRouter();
+
 const route = useRoute();
-const { addNotification } = useNotification();
+const router = useRouter();
+const teacherId = localStorage.getItem("user-id");
 
 const loadingStudents = ref(true);
-const teacherId = localStorage.getItem("user-id");
 
 const disciplineInfo = ref({
   name: "",
@@ -184,81 +163,55 @@ const disciplineInfo = ref({
   students: [],
   presences: 0,
   absences: 0,
-  frequency: 0,
+  frequency: 0
 });
 
 async function loadDisciplineInfo() {
-  try {
-    loadingStudents.value = true;
-    const offeringId = route.params.offeringId;
+  loadingStudents.value = true;
 
-    const offering = await OfferingDAO.getById(offeringId);
+  const offeringId = route.params.offeringId;
 
-    const [subject, course, teacher, enrollments] = await Promise.all([
-      SubjectDAO.getById(offering.subjectId),
-      offering.courseId
-        ? CourseDAO.getById(offering.courseId)
-        : Promise.resolve({ name: "Curso não encontrado" }),
-      offering.teacherId
-        ? TeacherDAO.getById(offering.teacherId)
-        : Promise.resolve({ name: "Professor não encontrado" }),
-      EnrollmentDAO.getStudentsByOffering(offeringId),
-    ]);
+  const offering = await SubjectOfferingDAO.getById(offeringId);
 
-    const students = await Promise.all(
-      enrollments.map(async (e) => {
-        try {
-          const s = await StudentDAO.getById(e.studentId);
-          return {
-            id: s.id,
-            name: s.name,
-            registration: s.registration,
-            course: s.course?.name ?? "Sem curso",
-            isPresent: false,
-          };
-        } catch {
-          return null;
-        }
-      })
-    );
+  const [subject, course, teacher, report] = await Promise.all([
+    SubjectDAO.getById(offering.subjectId),
+    CourseDAO.getById(offering.courseId),
+    TeacherDAO.getById(offering.teacherId),
+    AttendanceDAO.getReportByOffering(offeringId)
+  ]);
 
-    disciplineInfo.value = {
-      name: subject.name,
-      term: offering.term,
-      schedule: offering.schedule,
-      course,
-      teacher,
-      presences: 0,
-      absences: 0,
-      frequency: 0,
-      students: students.filter(Boolean),
-    };
-  } catch (error) {
-    console.error("Erro ao carregar disciplina:", error);
-    addNotification("Erro ao carregar dados da disciplina.", "error");
-  } finally {
-    loadingStudents.value = false;
-  }
+  const presences = report.reduce((s, r) => s + r.presents, 0);
+  const absences = report.reduce((s, r) => s + r.absents, 0);
+
+  const totalPossible =
+    report.length > 0
+      ? report[0].totalSessions * report.length
+      : 0;
+
+  const frequency =
+    totalPossible > 0
+      ? Math.round((presences / totalPossible) * 100)
+      : 0;
+
+  disciplineInfo.value = {
+    name: subject.name,
+    term: offering.term,
+    schedule: offering.schedule,
+    course,
+    teacher,
+    students: report,
+    presences,
+    absences,
+    frequency
+  };
+
+  loadingStudents.value = false;
 }
 
 async function comecarAula() {
-  try {
-    const offeringId = route.params.offeringId;
-
-    await SubjectDAO.startOffering(offeringId, teacherId);
-
-    router.push({
-      name: "Dashboard",
-      params: { offeringId },
-      query: { started: "true" }
-    });
-
-  } catch (error) {
-    console.error(error);
-    addNotification("Erro ao iniciar a aula.", "error");
-  }
+  await SubjectOfferingDAO.startOffering(route.params.offeringId, teacherId);
+  router.push({ name: "Dashboard" });
 }
-
 
 function voltarPagina() {
   router.go(-1);
@@ -266,4 +219,3 @@ function voltarPagina() {
 
 onMounted(loadDisciplineInfo);
 </script>
-

@@ -1,16 +1,15 @@
 <script setup>
 import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
-import { Search, Download } from "lucide-vue-next";
+import { Search } from "lucide-vue-next";
 
 import BaseLayout from "../components/BaseLayout.vue";
 
 import TeacherDAO from "../services/TeacherDAO";
 import SubjectDAO from "../services/SubjectDAO";
 import ClassroomDAO from "../services/ClassroomDAO";
-import EnrollmentDAO from "../services/EnrollmentDAO";
-import StudentDAO from "../services/StudentDAO";
 import ClassSessionDAO from "../services/ClassSessionDAO";
+import AttendanceDAO from "../services/AttendanceDAO";
 
 const router = useRouter();
 
@@ -28,6 +27,7 @@ async function loadOfferings() {
       data.map(async (offer) => {
         const subject = await SubjectDAO.getById(offer.subjectId);
         const classroom = await ClassroomDAO.getById(offer.classroomId);
+        const report = await AttendanceDAO.getReportByOffering(offer.id);
 
         let timeStart = "";
         let timeEnd = "";
@@ -38,21 +38,13 @@ async function loadOfferings() {
           timeEnd = parts[1] || "";
         }
 
-        const enrollments = await EnrollmentDAO.getStudentsByOffering(offer.id);
-
-        const students = await Promise.all(
-          enrollments.map(async (e) => {
-            const student = await StudentDAO.getById(e.studentId);
-            return {
-              id: student.id,
-              nome: student.name,
-              matricula: student.registration,
-              curso: student.course?.name ?? "Sem curso",
-              presencas: 0,
-              ausencias: 0,
-            };
-          })
-        );
+        const students = report.map((r) => ({
+          id: r.studentId,
+          nome: r.studentName,
+          matricula: r.registration,
+          presencas: r.presents,
+          ausencias: r.absents,
+        }));
 
         return {
           ...offer,
@@ -75,10 +67,9 @@ async function loadOfferings() {
 async function loadActiveSessions() {
   try {
     const sessions = await ClassSessionDAO.getAllActive();
-
     activeOfferings.value = sessions
-      .filter((session) => session.sessionEnd === null)
-      .map((session) => session.offeringId);
+      .filter((s) => s.sessionEnd === null)
+      .map((s) => s.offeringId);
   } catch (err) {
     console.error("Erro ao carregar aulas ativas:", err);
   }
@@ -107,6 +98,7 @@ onMounted(async () => {
   await loadActiveSessions();
 });
 </script>
+
 
 <template>
   <BaseLayout>

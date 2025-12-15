@@ -16,12 +16,17 @@ class AttendanceDAO extends GenericDAO {
     return res.data;
   }
 
-   exportCsvByOffering(offeringId) {
+  async getReportByOffering(offeringId) {
+    const res = await this.api.get(
+      `${this.baseURL}/report/offering/${offeringId}`
+    );
+    return res.data;
+  }
+
+  exportCsvByOffering(offeringId) {
     return this.api.get(
-      `/api/attendance/offering/${offeringId}/export/csv`,
-      {
-        responseType: "blob",
-      }
+      `${this.baseURL}/offering/${offeringId}/export/csv`,
+      { responseType: "blob" }
     );
   }
 }
