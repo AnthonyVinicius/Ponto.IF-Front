@@ -1,8 +1,10 @@
 <template>
-  <div class="relative flex justify-center w-full sm:w-auto">
-
+  <div
+    ref="dropdownRef"
+    class="relative flex justify-center w-full sm:w-auto"
+  >
     <button
-      @click="isOpen = !isOpen"
+      @click.stop="isOpen = !isOpen"
       class="flex items-center justify-center gap-2 w-full sm:w-36 px-4 py-2 rounded-full font-semibold text-sm focus:outline-none transition-colors duration-200"
       :class="{
         'bg-green-100 text-green-700': localStatus === 'Presente',
@@ -36,12 +38,12 @@
         </li>
       </ul>
     </div>
-
   </div>
 </template>
 
+
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted, onUnmounted } from "vue";
 import { Check, X, Clock, ChevronDown } from "lucide-vue-next";
 
 const props = defineProps({
@@ -49,8 +51,10 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["update"]);
+
 const localStatus = ref(props.status);
 const isOpen = ref(false);
+const dropdownRef = ref(null);
 
 watch(
   () => props.status,
@@ -76,4 +80,19 @@ function selectStatus(value) {
   emit("update", value);
   isOpen.value = false;
 }
+
+function handleClickOutside(event) {
+  if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
+    isOpen.value = false;
+  }
+}
+
+onMounted(() => {
+  document.addEventListener("click", handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", handleClickOutside);
+});
 </script>
+

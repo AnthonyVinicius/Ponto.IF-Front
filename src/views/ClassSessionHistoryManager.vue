@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref, computed } from "vue";
 import { useRouter } from "vue-router";
-import { Search, Download } from "lucide-vue-next";
+import { Search } from "lucide-vue-next";
 
 import BaseLayout from "../components/BaseLayout.vue";
 

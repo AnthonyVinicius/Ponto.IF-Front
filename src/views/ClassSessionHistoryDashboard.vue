@@ -221,25 +221,32 @@ async function loadSessions() {
 const filteredSessions = computed(() => {
   const now = new Date();
 
-  return sessions.value.filter((session) => {
-    const date = new Date(session.sessionStart);
+  return [...sessions.value]
+    .filter((session) => {
+      const date = new Date(session.sessionStart);
 
-    if (period.value !== "ALL") {
-      const diffDays = (now - date) / (1000 * 60 * 60 * 24);
+      if (period.value !== "ALL") {
+        const diffDays = (now - date) / (1000 * 60 * 60 * 24);
 
-      if (period.value === "TODAY" && diffDays >= 1) return false;
-      if (period.value === "7D" && diffDays > 7) return false;
-      if (period.value === "30D" && diffDays > 30) return false;
-    }
+        if (period.value === "TODAY" && diffDays >= 1) return false;
+        if (period.value === "7D" && diffDays > 7) return false;
+        if (period.value === "30D" && diffDays > 30) return false;
+      }
 
-    if (searchDate.value) {
-      const formatted = date.toLocaleDateString("pt-BR");
-      return formatted.includes(searchDate.value);
-    }
+      if (searchDate.value) {
+        const formatted = date.toLocaleDateString("pt-BR");
+        return formatted.includes(searchDate.value);
+      }
 
-    return true;
-  });
+      return true;
+    })
+    .sort(
+      (a, b) =>
+        new Date(b.sessionStart).getTime() -
+        new Date(a.sessionStart).getTime()
+    );
 });
+
 
 const sessionsByDay = computed(() => {
   const map = {};

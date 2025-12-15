@@ -105,7 +105,6 @@
                 <tr>
                   <th class="px-4 py-3 text-left font-semibold">Aluno</th>
                   <th class="px-4 py-3 text-center font-semibold">Matrícula</th>
-                  <th class="px-4 py-3 text-center font-semibold">Situação</th>
                 </tr>
               </thead>
 
@@ -127,19 +126,6 @@
                   <td class="px-4 py-3 text-center font-mono text-gray-700">
                     {{ student.registration }}
                   </td>
-
-                  <td class="px-4 py-3 text-center">
-                    <span
-                      class="inline-flex rounded-full px-3 py-1 text-xs font-semibold"
-                      :class="
-                        student.isPresent
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-gray-100 text-gray-600'
-                      "
-                    >
-                      {{ student.isPresent ? "Presente" : "Indefinido" }}
-                    </span>
-                  </td>
                 </tr>
               </tbody>
             </table>
@@ -156,18 +142,6 @@
               </p>
               <p class="text-xs text-gray-500 font-mono">
                 {{ student.registration }}
-              </p>
-              <p class="text-sm mt-2">
-                <span
-                  class="inline-flex rounded-full px-2 py-1 text-xs font-semibold"
-                  :class="
-                    student.isPresent
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-gray-100 text-gray-600'
-                  "
-                >
-                  {{ student.isPresent ? "Presente" : "Indefinido" }}
-                </span>
               </p>
             </div>
           </div>
@@ -193,9 +167,10 @@ import SubjectDAO from "../services/SubjectDAO";
 import OfferingDAO from "../services/SubjectOfferingDAO";
 import CourseDAO from "../services/CourseDAO";
 import TeacherDAO from "../services/TeacherDAO";
-
+import { useNotification } from "../composables/useNotification";
 const router = useRouter();
 const route = useRoute();
+const { addNotification } = useNotification();
 
 const loadingStudents = ref(true);
 const teacherId = localStorage.getItem("user-id");
@@ -260,7 +235,7 @@ async function loadDisciplineInfo() {
     };
   } catch (error) {
     console.error("Erro ao carregar disciplina:", error);
-    alert("Erro ao carregar dados da disciplina.");
+    addNotification("Erro ao carregar dados da disciplina.", "error");
   } finally {
     loadingStudents.value = false;
   }
@@ -272,18 +247,18 @@ async function comecarAula() {
 
     await SubjectDAO.startOffering(offeringId, teacherId);
 
-    alert("Aula iniciada com sucesso!");
-
     router.push({
       name: "Dashboard",
       params: { offeringId },
+      query: { started: "true" }
     });
-    
+
   } catch (error) {
     console.error(error);
-    alert("Erro ao iniciar a aula.");
+    addNotification("Erro ao iniciar a aula.", "error");
   }
 }
+
 
 function voltarPagina() {
   router.go(-1);
@@ -291,3 +266,4 @@ function voltarPagina() {
 
 onMounted(loadDisciplineInfo);
 </script>
+
